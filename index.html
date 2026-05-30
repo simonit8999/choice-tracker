@@ -8,12 +8,10 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background-color: #FFD700; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 10px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
         .container { max-width: 460px; width: 100%; margin: 0 auto; }
-        .card { background-color: #000000; border-radius: 28px; padding: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .card { background-color: #000000; border-radius: 28px; padding: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: flex; flex-direction: column; }
         
-        /* ФИКСИРОВАННАЯ ОДИНАКОВАЯ ВЫСОТА ДЛЯ ВСЕХ ЭКРАНОВ */
-        .screen { min-height: 540px; display: none; flex-direction: column; }
+        .screen { min-height: 540px; display: none; flex-direction: column; flex: 1; }
         .screen.active { display: flex; }
-        #trackerScreen, #historyScreen, #achievementsScreen, #settingsScreen { min-height: 540px; }
         
         .welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #FFD700; display: flex; align-items: center; justify-content: center; z-index: 3000; }
         .welcome-card { background-color: #000000; border-radius: 28px; padding: 20px; max-width: 280px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
@@ -55,8 +53,12 @@
         .reset-btn { background-color: #8b0000; color: white; border: none; padding: 7px; border-radius: 25px; width: 100%; margin-top: 6px; cursor: pointer; font-size: 0.65rem; font-weight: bold; text-align: center; }
         .reset-btn:active { transform: scale(0.97); }
         
-        /* Увеличенный шрифт для истории, достижений и настроек */
-        .history-list, .achievements-list { max-height: 380px; overflow-y: auto; scrollbar-width: none; margin-top: 4px; }
+        .history-list, .achievements-list { 
+            flex: 1; 
+            overflow-y: auto; 
+            scrollbar-width: none; 
+            margin-top: 4px; 
+        }
         .history-list::-webkit-scrollbar, .achievements-list::-webkit-scrollbar { display: none; }
         .history-item, .achievement-item { background-color: #1a1a1a; border-radius: 12px; padding: 8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid #333; }
         .achievement-item.completed { border-color: #FFD700; }
@@ -77,7 +79,17 @@
         .support-btn:active { transform: scale(0.97); }
         
         .emergency-modal, .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); display: flex; align-items: center; justify-content: center; z-index: 4000; cursor: pointer; }
-        .emergency-card { background: #1a1a1a; border-radius: 24px; padding: 18px; max-width: 280px; width: 90%; text-align: center; border: 2px solid #FF5722; }
+        
+        .emergency-card { 
+            background: #1a1a1a; 
+            border-radius: 24px; 
+            padding: 18px; 
+            max-width: 280px; 
+            width: 90%; 
+            text-align: center; 
+            border: none; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
         .emergency-card * { color: white; }
         .emergency-warning { color: #FF5722; font-size: 1rem; font-weight: bold; margin-bottom: 8px; }
         .emergency-text { color: #ccc; font-size: 0.75rem; margin: 8px 0; text-align: left; }
@@ -88,7 +100,16 @@
         .emergency-btn:active { transform: scale(0.97); }
         .emergency-btn.secondary { background-color: #333; margin-top: 6px; }
         
-        .modal-content { background: #1a1a1a; border-radius: 24px; padding: 18px; max-width: 280px; width: 90%; text-align: center; border: 2px solid #FF5722; }
+        .modal-content { 
+            background: #1a1a1a; 
+            border-radius: 24px; 
+            padding: 18px; 
+            max-width: 280px; 
+            width: 90%; 
+            text-align: center; 
+            border: none; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
         .quote-text { font-size: 0.85rem; color: #FFD700; margin: 8px 0; }
         .modal-content button { background-color: #FFD700; color: #000; border: none; padding: 6px 14px; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 4px; font-size: 0.75rem; }
         .modal-content button:active { transform: scale(0.96); }
@@ -103,11 +124,9 @@
             .container { max-width: 520px; }
             .card { padding: 20px; }
             .screen { min-height: 580px; }
-            #trackerScreen, #historyScreen, #achievementsScreen, #settingsScreen { min-height: 580px; }
             .day-cell { font-size: 0.85rem; }
             .action-btn { padding: 10px; font-size: 0.8rem; }
             .stat-value { font-size: 1.3rem; }
-            .history-list, .achievements-list { max-height: 420px; }
             .history-date { font-size: 0.85rem; }
             .history-days { font-size: 0.8rem; }
             .achievement-title { font-size: 0.85rem; }
@@ -154,7 +173,7 @@
 
         <div id="historyScreen" class="screen">
             <div class="logo">📜 История</div>
-            <div id="historyList" class="history-list"><div style="color:#666; text-align:center; padding:15px;">Нет попыток</div></div>
+            <div id="historyList" class="history-list"><div style="color:#666; text-align:center; padding:20px;">Нет попыток</div></div>
         </div>
 
         <div id="achievementsScreen" class="screen">
@@ -264,27 +283,110 @@
         const percent = getProgressPercent(); document.getElementById('progressFill').style.width = `${percent}%`; document.getElementById('progressPercent').innerHTML = `${Math.round(percent)}% завершено`; document.getElementById('currentDayText').innerHTML = `📅 День ${getCurrentDay()} из 30`; document.getElementById('totalDaysStat').textContent = totalDays; document.getElementById('bestStreakStat').textContent = bestStreak; document.getElementById('attemptsStat').textContent = attemptsHistory.length;
     }
 
-    function renderHistory() { const container = document.getElementById('historyList'); if (!container) return; if (attemptsHistory.length === 0) { container.innerHTML = '<div style="color:#666; text-align:center; padding:15px;">Нет попыток</div>'; return; } container.innerHTML = ''; [...attemptsHistory].reverse().forEach(att => { const start = new Date(att.startDate).toLocaleDateString(); const end = att.endDate ? new Date(att.endDate).toLocaleDateString() : '—'; const div = document.createElement('div'); div.className = 'history-item'; div.innerHTML = `<div class="history-date">📅 ${start} — ${end}</div><div class="history-days">✅ Выполнено дней: ${att.daysCompleted}</div><div class="history-end">❌ ${att.endReason}</div>`; container.appendChild(div); }); }
+    function renderHistory() { 
+        const container = document.getElementById('historyList'); 
+        if (!container) return; 
+        if (attemptsHistory.length === 0) { 
+            container.innerHTML = '<div style="color:#666; text-align:center; padding:20px;">Нет попыток</div>'; 
+            return; 
+        } 
+        container.innerHTML = ''; 
+        [...attemptsHistory].reverse().forEach(att => { 
+            const start = new Date(att.startDate).toLocaleDateString(); 
+            const end = att.endDate ? new Date(att.endDate).toLocaleDateString() : '—'; 
+            const div = document.createElement('div'); 
+            div.className = 'history-item'; 
+            div.innerHTML = `<div class="history-date">📅 ${start} — ${end}</div><div class="history-days">✅ Выполнено дней: ${att.daysCompleted}</div><div class="history-end">❌ ${att.endReason}</div>`; 
+            container.appendChild(div); 
+        }); 
+    }
 
-    function showPopup(msg) { const modal = document.createElement('div'); modal.className = 'modal'; modal.innerHTML = `<div class="modal-content"><div style="color:#FFD700; white-space:pre-line;">${msg}</div><button>Закрыть</button></div>`; document.body.appendChild(modal); modal.onclick = () => modal.remove(); modal.querySelector('button').onclick = () => modal.remove(); }
+    function showPopup(msg) { 
+        const modal = document.createElement('div'); 
+        modal.className = 'modal'; 
+        modal.innerHTML = `<div class="modal-content"><div style="color:#FFD700; white-space:pre-line;">${msg}</div><button>Закрыть</button></div>`; 
+        document.body.appendChild(modal); 
+        modal.onclick = () => modal.remove(); 
+        modal.querySelector('button').onclick = () => modal.remove(); 
+    }
 
-    function showReasonModal(callback) { const modal = document.createElement('div'); modal.className = 'modal'; modal.innerHTML = `<div class="modal-content"><h3>Причина срыва</h3><textarea id="reason" rows="2" placeholder="Напиши причину..."></textarea><div><button id="cancel">◀ ОТМЕНА</button><button id="save">СОХРАНИТЬ ▶</button></div></div>`; document.body.appendChild(modal); modal.querySelector('#save').onclick = () => { const reason = modal.querySelector('#reason').value.trim(); callback(reason || "Не указана"); modal.remove(); }; modal.querySelector('#cancel').onclick = () => modal.remove(); }
+    function showReasonModal(callback) { 
+        const modal = document.createElement('div'); 
+        modal.className = 'modal'; 
+        modal.innerHTML = `<div class="modal-content"><h3>Причина срыва</h3><textarea id="reason" rows="2" placeholder="Напиши причину..."></textarea><div><button id="cancel">◀ ОТМЕНА</button><button id="save">СОХРАНИТЬ ▶</button></div></div>`; 
+        document.body.appendChild(modal); 
+        modal.querySelector('#save').onclick = () => { 
+            const reason = modal.querySelector('#reason').value.trim(); 
+            callback(reason || "Не указана"); 
+            modal.remove(); 
+        }; 
+        modal.querySelector('#cancel').onclick = () => modal.remove(); 
+    }
 
-    function endAttempt(reason) { attemptsHistory.push({ startDate: currentAttempt.startDate, daysCompleted: currentAttempt.completedDays.length, endReason: reason, endDate: new Date().toISOString() }); currentAttempt = { startDate: new Date().toISOString(), completedDays: [] }; saveData(); renderAll(); }
+    function endAttempt(reason) { 
+        attemptsHistory.push({ startDate: currentAttempt.startDate, daysCompleted: currentAttempt.completedDays.length, endReason: reason, endDate: new Date().toISOString() }); 
+        currentAttempt = { startDate: new Date().toISOString(), completedDays: [] }; 
+        saveData(); 
+        renderAll(); 
+    }
 
-    function completeDay() { const day = getCurrentDay(); if (day > 30) { showPopup("30 дней завершено!"); return; } if (currentAttempt.completedDays.includes(day)) { showPopup("День уже выполнен"); return; } showPopup(quotes[day]); currentAttempt.completedDays.push(day); totalDays++; if (currentAttempt.completedDays.length > bestStreak) bestStreak = currentAttempt.completedDays.length; saveData(); renderAll(); checkAchievements(); if (currentAttempt.completedDays.length === 30) { setTimeout(() => { showPopup("🏆 Ты прошёл 30 дней! Поздравляю!"); endAttempt("Победа! 30 дней"); }, 500); } }
+    function completeDay() { 
+        const day = getCurrentDay(); 
+        if (day > 30) { showPopup("30 дней завершено!"); return; } 
+        if (currentAttempt.completedDays.includes(day)) { showPopup("День уже выполнен"); return; } 
+        showPopup(quotes[day]); 
+        currentAttempt.completedDays.push(day); 
+        totalDays++; 
+        if (currentAttempt.completedDays.length > bestStreak) bestStreak = currentAttempt.completedDays.length; 
+        saveData(); 
+        renderAll(); 
+        checkAchievements(); 
+        if (currentAttempt.completedDays.length === 30) { 
+            setTimeout(() => { 
+                showPopup("🏆 Ты прошёл 30 дней! Поздравляю!"); 
+                endAttempt("Победа! 30 дней"); 
+            }, 500); 
+        } 
+    }
 
-    function failDay() { const day = getCurrentDay(); if (day > 30) { showPopup("Ты уже прошёл 30 дней"); return; } if (currentAttempt.completedDays.includes(day)) { showPopup("Этот день уже выполнен"); return; } showReasonModal((reason) => { showPopup(`❌ Срыв на дне ${day}\nТвои ${currentAttempt.completedDays.length} дня(ей) ушли в копилку`); endAttempt(`Срыв на дне ${day}. Причина: ${reason}`); }); }
+    function failDay() { 
+        const day = getCurrentDay(); 
+        if (day > 30) { showPopup("Ты уже прошёл 30 дней"); return; } 
+        if (currentAttempt.completedDays.includes(day)) { showPopup("Этот день уже выполнен"); return; } 
+        showReasonModal((reason) => { 
+            showPopup(`❌ Срыв на дне ${day}\nТвои ${currentAttempt.completedDays.length} дня(ей) ушли в копилку`); 
+            endAttempt(`Срыв на дне ${day}. Причина: ${reason}`); 
+        }); 
+    }
 
-    function manualReset() { if (confirm("Начать новую попытку?")) { if (currentAttempt.completedDays.length > 0) endAttempt("Ручной сброс"); else { currentAttempt.startDate = new Date().toISOString(); saveData(); renderAll(); } } }
+    function manualReset() { 
+        if (confirm("Начать новую попытку?")) { 
+            if (currentAttempt.completedDays.length > 0) endAttempt("Ручной сброс"); 
+            else { 
+                currentAttempt.startDate = new Date().toISOString(); 
+                saveData(); 
+                renderAll(); 
+            } 
+        } 
+    }
 
-    function showEmergency() { const warningModal = document.createElement('div'); warningModal.className = 'emergency-modal'; warningModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning">⚠️ СТОП ⚠️</div><div class="emergency-text">ДРУГ, ЕСЛИ ТЫ НЕ НА ГРАНИ СРЫВА — ЗАКРОЙ.</div><button class="emergency-btn" id="emergencyConfirmBtn">😰 НЕТ, Я НА ГРАНИ</button><button class="emergency-btn secondary" id="emergencyCancelBtn">← НАЗАД</button></div>`; document.body.appendChild(warningModal); warningModal.querySelector('#emergencyConfirmBtn').onclick = () => { warningModal.remove(); showEmergencySteps(); }; warningModal.querySelector('#emergencyCancelBtn').onclick = () => warningModal.remove(); }
+    function showEmergency() { 
+        const warningModal = document.createElement('div'); 
+        warningModal.className = 'emergency-modal'; 
+        warningModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning">⚠️ СТОП ⚠️</div><div class="emergency-text">ДРУГ, ЕСЛИ ТЫ НЕ НА ГРАНИ СРЫВА — ЗАКРОЙ.</div><button class="emergency-btn" id="emergencyConfirmBtn">😰 НЕТ, Я НА ГРАНИ</button><button class="emergency-btn secondary" id="emergencyCancelBtn">← НАЗАД</button></div>`; 
+        document.body.appendChild(warningModal); 
+        warningModal.querySelector('#emergencyConfirmBtn').onclick = () => { 
+            warningModal.remove(); 
+            showEmergencySteps(); 
+        }; 
+        warningModal.querySelector('#emergencyCancelBtn').onclick = () => warningModal.remove(); 
+    }
 
     function showEmergencySteps() { 
         let timerSeconds = 900, timerInterval; 
         const stepsModal = document.createElement('div'); 
         stepsModal.className = 'emergency-modal'; 
-        stepsModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning" style="color:#FF5722;">🔴 ТЫ НА ГРАНИ</div><div class="emergency-steps"><div class="emergency-step">1. ВСТАНЬ И ВЫЙДИ</div><div class="emergency-step">2. ХОЛОДНАЯ ВОДА</div><div class="emergency-step">3. 20 ПРИСЕДАНИЙ</div><div class="emergency-step">4. ДЫШИ: 4-7-8</div></div><div class="timer-display" id="emergencyTimerDisplay">15:00</div><button class="emergency-btn" id="emergencyRescueBtn">✅ Я СПАСЁН</button></div>`; 
+               stepsModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning" style="color:#FF5722;">🔴 ТЫ НА ГРАНИ</div><div class="emergency-steps"><div class="emergency-step">1. ВСТАНЬ И ВЫЙДИ</div><div class="emergency-step">2. ХОЛОДНАЯ ВОДА</div><div class="emergency-step">3. 20 ПРИСЕДАНИЙ</div><div class="emergency-step">4. ДЫШИ: 4-7-8</div></div><div class="timer-display" id="emergencyTimerDisplay">15:00</div><button class="emergency-btn" id="emergencyRescueBtn">✅ Я СПАСЁН</button></div>`; 
         document.body.appendChild(stepsModal); 
         function updateTimer() { 
             const minutes = Math.floor(timerSeconds / 60); 
@@ -307,7 +409,7 @@
     }
 
     function applyLanguage() { 
-                const isRu = settings.language === 'ru'; 
+        const isRu = settings.language === 'ru'; 
         document.querySelectorAll('.nav-btn').forEach((btn,i) => { 
             const texts = isRu ? ['📅 Трекер','📋 История','🏆 Достижения','⚙️ Настройки'] : ['📅 Tracker','📋 History','🏆 Achievements','⚙️ Settings']; 
             if(btn.dataset.screen === 'tracker') btn.innerHTML = texts[0]; 
