@@ -9,12 +9,8 @@
         body { background-color: #FFD700; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 8px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .container { max-width: 400px; width: 100%; margin: 0 auto; }
         .card { background-color: #000000; border-radius: 28px; padding: 12px; }
-        
-        /* Все экраны одной высоты */
         .screen { min-height: 460px; display: none; flex-direction: column; }
         .screen.active { display: flex; }
-        
-        /* Приветствие */
         .welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #FFD700; display: flex; align-items: center; justify-content: center; z-index: 3000; }
         .welcome-card { background-color: #000000; border-radius: 32px; padding: 20px; max-width: 280px; text-align: center; }
         .welcome-logo { font-size: 2rem; font-weight: 900; color: #FFD700; background-color: #1a1a1a; display: inline-block; padding: 6px 18px; border-radius: 50px; margin-bottom: 15px; }
@@ -23,13 +19,9 @@
         .welcome-text p { margin: 5px 0; }
         .welcome-btn { background-color: #FFD700; color: #000000; border: none; padding: 10px 20px; font-size: 0.9rem; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; }
         .hidden { display: none; }
-        
-        /* Нижняя навигация */
         .bottom-nav { margin-top: 10px; display: flex; gap: 6px; background-color: #000000; border-radius: 40px; padding: 5px; }
         .nav-btn { flex: 1; background-color: #1a1a1a; color: #FFD700; border: none; padding: 8px 0; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
         .nav-btn.active { background-color: #FFD700; color: #000000; }
-        
-        /* Общие стили */
         .logo { font-size: 1.1rem; font-weight: 900; color: #FFD700; background-color: #1a1a1a; display: inline-block; padding: 3px 12px; border-radius: 40px; margin-bottom: 8px; }
         .stats-cards { display: flex; gap: 6px; margin: 8px 0; }
         .stat-card { background-color: #1a1a1a; border-radius: 12px; padding: 6px; flex: 1; text-align: center; }
@@ -39,22 +31,16 @@
         .progress-fill { background-color: #2e7d32; width: 0%; height: 100%; transition: width 0.3s; }
         .progress-text { color: #FFD700; font-size: 0.6rem; text-align: center; margin-bottom: 3px; }
         .current-day-text { color: #FFD700; margin: 5px 0; font-size: 0.7rem; text-align: center; }
-        
-        /* Сетка дней */
         .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin: 8px 0; }
         .day-cell { background-color: #1a1a1a; color: #FFD700; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-weight: bold; font-size: 0.75rem; cursor: pointer; }
         .day-cell.completed { background-color: #2e7d32; color: white; }
         .day-cell.current { border: 2px solid #FFD700; }
-        
-        /* Кнопки действий */
         .action-panel { display: flex; gap: 6px; margin: 8px 0; }
         .action-btn { flex: 1; padding: 8px; border: none; border-radius: 40px; font-weight: bold; font-size: 0.7rem; cursor: pointer; }
         .success-btn { background-color: #2e7d32; color: white; }
         .fail-btn { background-color: #8b0000; color: white; }
         .help-btn { background-color: #FF5722; color: white; }
         .reset-btn { background-color: #8b0000; color: white; border: none; padding: 7px; border-radius: 25px; width: 100%; margin-top: 6px; cursor: pointer; font-size: 0.65rem; }
-        
-        /* История и достижения */
         .history-list, .achievements-list { max-height: 300px; overflow-y: auto; scrollbar-width: none; }
         .history-list::-webkit-scrollbar, .achievements-list::-webkit-scrollbar { display: none; }
         .history-item, .achievement-item { background-color: #1a1a1a; border-radius: 12px; padding: 8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid #333; }
@@ -64,14 +50,10 @@
         .achievement-title { color: #FFD700; font-weight: bold; font-size: 0.7rem; }
         .achievement-status { font-size: 0.55rem; color: #666; }
         .achievement-date { font-size: 0.55rem; color: #2e7d32; }
-        
-        /* Настройки */
         .setting-item { margin-bottom: 10px; }
         .setting-label { color: #FFD700; display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.7rem; }
         select { width: 100%; padding: 8px; border-radius: 25px; background-color: #1a1a1a; color: #FFD700; font-size: 0.75rem; border: 1px solid #FFD700; }
         .support-btn { width: 100%; background-color: #1a1a1a; color: #FFD700; border: 1px solid #FFD700; padding: 8px; border-radius: 40px; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
-        
-        /* Модальные окна */
         .emergency-modal, .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); display: flex; align-items: center; justify-content: center; z-index: 4000; cursor: pointer; }
         .emergency-card, .modal-content { background: #1a1a1a; border-radius: 28px; padding: 20px; max-width: 280px; width: 90%; text-align: center; border: 2px solid #FF5722; }
         .emergency-warning { color: #FF5722; font-size: 1rem; font-weight: bold; margin-bottom: 10px; }
@@ -158,43 +140,59 @@
 
 <script>
     const quotes = {
-        1:"Первый день — самый простой. Не обманывай себя.",
-        2:"Твой мозг ещё не понял, что ты серьёзно.",
-        3:"Три дня. 90% сдаются раньше.",
-        4:"Если легко — делаешь что-то не так.",
-        5:"Пять дней. Твоя бывшая версия не узнала бы.",
-        6:"Триггеры не исчезли. Ты стал сильнее.",
-        7:"Первая неделя — грязь. Дальше холод.",
-        8:"Мозг захочет сделку. Не торгуйся.",
-        9:"Сублимация — не терпи.",
-        10:"Десять дней. Дофамин просыпается.",
-        11:"Не запрещай. Заменяй.",
-        12:"Охлаждение — не шутка.",
-        13:"Сон — твоя перезагрузка.",
-        14:"Две недели. Ты уже не тот.",
-        15:"Пик ломки. Ты пройдёшь.",
-        16:"Не проверяй. Работает.",
-        17:"Утренняя эрекция — не враг.",
-        18:"Эротический сон — не срыв.",
-        19:"Энергия прёт. Делай.",
-        20:"Женщины чувствуют силу.",
-        21:"Три недели. Гордись.",
-        22:"Чувствительность вернулась.",
-        23:"Злость — топливо.",
-        24:"Тестостерон на пике.",
-        25:"Люди тянутся к тебе.",
-        26:"Осталось 4 дня.",
-        27:"Энергия переполняет.",
-        28:"Стресс — проверка.",
-        29:"Один день.",
-        30:"Ты сделал выбор 30 раз."
+        1: "Первый день — самый простой. Не обманывай себя.",
+        2: "Твой мозг ещё не понял, что ты серьёзно. Покажи ему.",
+        3: "Три дня. Это больше, чем 90% мужчин. Но ты не они.",
+        4: "Если тебе легко — ты делаешь что-то не так. Должно ломать.",
+        5: "Пять дней. Твоя бывшая версия уже не узнала бы тебя.",
+        6: "Триггеры не исчезли. Ты просто стал сильнее их замечать.",
+        7: "Первая неделя — грязь. Ты прошёл её. Дальше — холод.",
+        8: "Мозг захочет сделку. Не торгуйся.",
+        9: "Сублимация — не терпи. Переплавляй похоть в действие.",
+        10: "Десять дней. Дофаминовые рецепторы начали просыпаться.",
+        11: "Не запрещай. Заменяй. Ты умнее своего инстинкта.",
+        12: "Охлаждение — не шутка. Сделай. Прямо сейчас.",
+        13: "Сон — твоя перезагрузка. Не кради её у себя.",
+        14: "Две недели. Ты уже не тот, кем был 14 дней назад.",
+        15: "Пик ломки. Если ты здесь — ты пройдёшь всё.",
+        16: "Не проверяй 'а работает ли ещё'. Работает.",
+        17: "Утренняя эрекция — не враг. Это знак восстановления.",
+        18: "Эротический сон — не срыв. Твоё тело лечится.",
+        19: "Энергия прёт. Не сиди. Делай. Сейчас.",
+        20: "Женщины чувствуют твою силу. Не сливай её на первую встречную.",
+        21: "Три недели. Ты перестроил нейронные сети. Гордись. Но не расслабляйся.",
+        22: "Чувствительность вернулась. Теперь ты снова мужчина.",
+        23: "Злость — это топливо. Сожги её в деле, а не в унитаз.",
+        24: "Тестостерон на пике. Твой голос стал глубже.",
+        25: "Люди тянутся к тебе. Ты стал магнитом.",
+        26: "Осталось 4 дня. Ты не сдашься за четыре дня.",
+        27: "Энергия переполняет. Это суперсила.",
+        28: "Стресс — не оправдание. Стресс — это проверка.",
+        29: "Один день. Ты прошёл 29. Не сломайся.",
+        30: "Ты сделал выбор 30 раз. Ты — мужчина."
     };
 
     const achievementsConfig = {
-        5:{name:"🥉 Первый рубеж", message:"5 дней. Ты в топ‑10.", extra:"3 фразы-бронежилета:\n1. НЕТ\n2. Это ловушка\n3. Позыв уйдёт"},
-        10:{name:"🥈 Двойной рубеж", message:"10 дней. Дофамин просыпается.", extra:"10 признаков перестройки мозга"},
-        20:{name:"🥇 Пик перелома", message:"20 дней. Тестостерон выше.", extra:"Дыхание 4-7-8"},
-        30:{name:"🏆 Победа Choice", message:"30 дней. Ты мужчина.", extra:"Скидка 50%: https://t.me/+yNTzArXO1RJjY2Ri"}
+        5: {
+            name: "🥉 Первый рубеж",
+            message: "Ты прошёл 5 дней. 90% мужчин срываются раньше. Ты — в топ‑10.",
+            extra: "3 фразы-бронежилета:\n1. НЕТ. Я не торгуюсь.\n2. Это не награда, это ловушка.\n3. Позыв уйдёт через 15 минут, стыд останется навсегда."
+        },
+        10: {
+            name: "🥈 Двойной рубеж",
+            message: "Десять дней. Дофаминовые рецепторы начали просыпаться. Мир становится ярче.",
+            extra: "10 признаков, что твой мозг перестраивается:\n🔲 Просыпаешься бодрее\n🔲 Голос стал глубже\n🔲 Женщины чаще смотрят в глаза\n🔲 Туман в голове рассеялся\n🔲 Легче начинать дела\n🔲 Злость направил в спорт/работу\n🔲 Энергии хватает до вечера\n🔲 Снятся яркие сны\n🔲 Меньше тяги к скроллингу\n🔲 Чувствуешь уважение к себе"
+        },
+        20: {
+            name: "🥇 Пик перелома",
+            message: "20 дней. Ты перешёл точку невозврата.\n✅ Тестостерон на 30–40% выше среднего\n✅ Кортизол упал\n✅ Дофаминовые рецепторы восстановились на 70%\n✅ Мимика, жесты, голос стали увереннее",
+            extra: "Дыхание '4-7-8' против срыва:\nВдох на 4 сек → задержка 7 сек → выдох 8 сек.\nПовтори 5 раз. Убивает тревогу за 1 минуту."
+        },
+        30: {
+            name: "🏆 Победа Choice",
+            message: "ТЫ СДЕЛАЛ ЭТО. 30 дней. Ты — мужчина.",
+            extra: "Также тебе доступен доступ к следующему моему проекту со скидкой в 50%. Все дальнейшие курсы и трекеры будут в канале ManUP → https://t.me/+yNTzArXO1RJjY2Ri"
+        }
     };
 
     let currentAttempt = { startDate: null, completedDays: [] };
