@@ -7,12 +7,13 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background-color: #FFD700; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 10px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .container { max-width: 480px; width: 100%; margin: 0 auto; }
+        .container { max-width: 460px; width: 100%; margin: 0 auto; }
         .card { background-color: #000000; border-radius: 28px; padding: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         
-        .screen { min-height: 560px; display: none; flex-direction: column; }
+        /* ФИКСИРОВАННАЯ ОДИНАКОВАЯ ВЫСОТА ДЛЯ ВСЕХ ЭКРАНОВ */
+        .screen { min-height: 540px; display: none; flex-direction: column; }
         .screen.active { display: flex; }
-        #trackerScreen, #historyScreen, #achievementsScreen, #settingsScreen { min-height: 560px; }
+        #trackerScreen, #historyScreen, #achievementsScreen, #settingsScreen { min-height: 540px; }
         
         .welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #FFD700; display: flex; align-items: center; justify-content: center; z-index: 3000; }
         .welcome-card { background-color: #000000; border-radius: 28px; padding: 20px; max-width: 280px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
@@ -25,7 +26,7 @@
         .hidden { display: none; }
         
         .bottom-nav { margin-top: 8px; display: flex; gap: 6px; background-color: #000000; border-radius: 40px; padding: 5px; }
-        .nav-btn { flex: 1; background-color: #1a1a1a; color: #FFD700; border: none; padding: 7px 0; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 0.7rem; transition: all 0.1s; }
+        .nav-btn { flex: 1; background-color: #1a1a1a; color: #FFD700; border: none; padding: 7px 0; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 0.7rem; transition: all 0.1s; text-align: center; }
         .nav-btn.active { background-color: #FFD700; color: #000000; }
         .nav-btn:active { transform: scale(0.96); }
         
@@ -46,31 +47,33 @@
         .day-cell:active { transform: scale(0.94); }
         
         .action-panel { display: flex; gap: 6px; margin: 8px 0; }
-        .action-btn { flex: 1; padding: 8px; border: none; border-radius: 40px; font-weight: bold; font-size: 0.7rem; cursor: pointer; transition: all 0.1s; }
+        .action-btn { flex: 1; padding: 8px; border: none; border-radius: 40px; font-weight: bold; font-size: 0.7rem; cursor: pointer; transition: all 0.1s; text-align: center; }
         .action-btn:active { transform: scale(0.96); }
         .success-btn { background-color: #2e7d32; color: white; }
         .fail-btn { background-color: #8b0000; color: white; }
         .help-btn { background-color: #FF5722; color: white; }
-        .reset-btn { background-color: #8b0000; color: white; border: none; padding: 7px; border-radius: 25px; width: 100%; margin-top: 6px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
+        .reset-btn { background-color: #8b0000; color: white; border: none; padding: 7px; border-radius: 25px; width: 100%; margin-top: 6px; cursor: pointer; font-size: 0.65rem; font-weight: bold; text-align: center; }
         .reset-btn:active { transform: scale(0.97); }
         
-        .history-list, .achievements-list { max-height: 400px; overflow-y: auto; scrollbar-width: none; margin-top: 4px; }
+        /* Увеличенный шрифт для истории, достижений и настроек */
+        .history-list, .achievements-list { max-height: 380px; overflow-y: auto; scrollbar-width: none; margin-top: 4px; }
         .history-list::-webkit-scrollbar, .achievements-list::-webkit-scrollbar { display: none; }
-        .history-item, .achievement-item { background-color: #1a1a1a; border-radius: 12px; padding: 6px; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; cursor: pointer; border: 1px solid #333; }
+        .history-item, .achievement-item { background-color: #1a1a1a; border-radius: 12px; padding: 8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid #333; }
         .achievement-item.completed { border-color: #FFD700; }
-        .achievement-icon { font-size: 1.2rem; min-width: 28px; text-align: center; }
+        .achievement-icon { font-size: 1.4rem; min-width: 36px; text-align: center; }
         .achievement-info { flex: 1; }
-        .achievement-title { color: #FFD700; font-weight: bold; font-size: 0.65rem; }
-        .achievement-status { font-size: 0.5rem; color: #666; }
-        .achievement-date { font-size: 0.5rem; color: #2e7d32; }
+        .achievement-title { color: #FFD700; font-weight: bold; font-size: 0.8rem; }
+        .achievement-status { font-size: 0.65rem; color: #666; }
+        .achievement-date { font-size: 0.6rem; color: #2e7d32; }
         
-        .history-date, .history-days, .history-end { color: white; }
-        .history-end { color: #ff8888; }
+        .history-date { font-size: 0.8rem; color: white; font-weight: bold; }
+        .history-days { font-size: 0.75rem; color: white; margin: 4px 0; }
+        .history-end { font-size: 0.7rem; color: #ff8888; }
         
-        .setting-item { margin-bottom: 8px; }
-        .setting-label { color: #FFD700; display: block; margin-bottom: 3px; font-weight: bold; font-size: 0.65rem; }
-        select { width: 100%; padding: 6px; border-radius: 25px; background-color: #1a1a1a; color: #FFD700; font-size: 0.7rem; border: 1px solid #FFD700; }
-        .support-btn { width: 100%; background-color: #1a1a1a; color: #FFD700; border: 1px solid #FFD700; padding: 6px; border-radius: 40px; font-weight: bold; cursor: pointer; font-size: 0.65rem; }
+        .setting-item { margin-bottom: 10px; }
+        .setting-label { color: #FFD700; display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.8rem; }
+        select { width: 100%; padding: 8px; border-radius: 25px; background-color: #1a1a1a; color: #FFD700; font-size: 0.8rem; border: 1px solid #FFD700; }
+        .support-btn { width: 100%; background-color: #1a1a1a; color: #FFD700; border: 1px solid #FFD700; padding: 8px; border-radius: 40px; font-weight: bold; cursor: pointer; font-size: 0.75rem; text-align: center; }
         .support-btn:active { transform: scale(0.97); }
         
         .emergency-modal, .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); display: flex; align-items: center; justify-content: center; z-index: 4000; cursor: pointer; }
@@ -81,13 +84,13 @@
         .emergency-steps { text-align: left; margin: 8px 0; }
         .emergency-step { color: white !important; margin: 6px 0; font-size: 0.7rem; font-weight: bold; }
         .timer-display { font-size: 1.4rem; font-weight: bold; color: #FF5722; margin: 8px 0; }
-        .emergency-btn { background-color: #FF5722; color: white; border: none; padding: 8px; border-radius: 40px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 6px; font-size: 0.8rem; }
+        .emergency-btn { background-color: #FF5722; color: white; border: none; padding: 8px; border-radius: 40px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 6px; font-size: 0.8rem; text-align: center; }
         .emergency-btn:active { transform: scale(0.97); }
         .emergency-btn.secondary { background-color: #333; margin-top: 6px; }
         
         .modal-content { background: #1a1a1a; border-radius: 24px; padding: 18px; max-width: 280px; width: 90%; text-align: center; border: 2px solid #FF5722; }
         .quote-text { font-size: 0.85rem; color: #FFD700; margin: 8px 0; }
-        .modal-content button { background-color: #FFD700; color: #000; border: none; padding: 6px 14px; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 4px; }
+        .modal-content button { background-color: #FFD700; color: #000; border: none; padding: 6px 14px; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 4px; font-size: 0.75rem; }
         .modal-content button:active { transform: scale(0.96); }
         .modal-content button#cancel { background-color: #333; color: #FFD700; border: 1px solid #FFD700; }
         .modal-content button#save { background-color: #FF5722; color: white; }
@@ -97,14 +100,18 @@
         
         @media (min-width: 600px) {
             body { padding: 20px; }
-            .container { max-width: 560px; }
+            .container { max-width: 520px; }
             .card { padding: 20px; }
-            .screen { min-height: 600px; }
-            #trackerScreen, #historyScreen, #achievementsScreen, #settingsScreen { min-height: 600px; }
-            .day-cell { font-size: 0.95rem; }
-            .action-btn { padding: 10px; font-size: 0.85rem; }
-            .stat-value { font-size: 1.4rem; }
-            .history-list, .achievements-list { max-height: 440px; }
+            .screen { min-height: 580px; }
+            #trackerScreen, #historyScreen, #achievementsScreen, #settingsScreen { min-height: 580px; }
+            .day-cell { font-size: 0.85rem; }
+            .action-btn { padding: 10px; font-size: 0.8rem; }
+            .stat-value { font-size: 1.3rem; }
+            .history-list, .achievements-list { max-height: 420px; }
+            .history-date { font-size: 0.85rem; }
+            .history-days { font-size: 0.8rem; }
+            .achievement-title { font-size: 0.85rem; }
+            .setting-label { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -296,11 +303,11 @@
             if (timerInterval) clearInterval(timerInterval); 
             stepsModal.remove(); 
             showPopup("✅ Ты справился."); 
-               };
+        }; 
     }
 
     function applyLanguage() { 
-        const isRu = settings.language === 'ru'; 
+                const isRu = settings.language === 'ru'; 
         document.querySelectorAll('.nav-btn').forEach((btn,i) => { 
             const texts = isRu ? ['📅 Трекер','📋 История','🏆 Достижения','⚙️ Настройки'] : ['📅 Tracker','📋 History','🏆 Achievements','⚙️ Settings']; 
             if(btn.dataset.screen === 'tracker') btn.innerHTML = texts[0]; 
