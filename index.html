@@ -6,51 +6,51 @@
     <title>CHOICE — 30 дней</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #FFD700; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 8px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .container { max-width: 400px; width: 100%; margin: 0 auto; }
-        .card { background-color: #000000; border-radius: 28px; padding: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        body { background-color: #FFD700; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 10px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 440px; width: 100%; margin: 0 auto; }
+        .card { background-color: #000000; border-radius: 28px; padding: 14px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         
-        .screen { min-height: 460px; display: none; flex-direction: column; }
+        .screen { min-height: 480px; display: none; flex-direction: column; }
         .screen.active { display: flex; }
         
         .welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #FFD700; display: flex; align-items: center; justify-content: center; z-index: 3000; }
-        .welcome-card { background-color: #000000; border-radius: 28px; padding: 18px; max-width: 260px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        .welcome-logo { font-size: 1.8rem; font-weight: 900; color: #FFD700; background-color: #1a1a1a; display: inline-block; padding: 5px 16px; border-radius: 50px; margin-bottom: 12px; }
+        .welcome-card { background-color: #000000; border-radius: 28px; padding: 20px; max-width: 280px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .welcome-logo { font-size: 2rem; font-weight: 900; color: #FFD700; background-color: #1a1a1a; display: inline-block; padding: 6px 18px; border-radius: 50px; margin-bottom: 12px; }
         .welcome-title { color: #FFD700; font-size: 1rem; font-weight: bold; margin-bottom: 8px; }
-        .welcome-text { color: #cccccc; font-size: 0.7rem; line-height: 1.3; text-align: left; margin: 10px 0; }
+        .welcome-text { color: #cccccc; font-size: 0.75rem; line-height: 1.3; text-align: left; margin: 10px 0; }
         .welcome-text p { margin: 4px 0; }
         .welcome-btn { background-color: #FFD700; color: #000000; border: none; padding: 8px 16px; font-size: 0.85rem; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; transition: transform 0.1s; }
         .welcome-btn:active { transform: scale(0.97); }
         .hidden { display: none; }
         
-        .bottom-nav { margin-top: 8px; display: flex; gap: 5px; background-color: #000000; border-radius: 40px; padding: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-        .nav-btn { flex: 1; background-color: #1a1a1a; color: #FFD700; border: none; padding: 6px 0; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 0.65rem; transition: all 0.1s; }
+        .bottom-nav { margin-top: 8px; display: flex; gap: 6px; background-color: #000000; border-radius: 40px; padding: 5px; }
+        .nav-btn { flex: 1; background-color: #1a1a1a; color: #FFD700; border: none; padding: 7px 0; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 0.7rem; transition: all 0.1s; }
         .nav-btn.active { background-color: #FFD700; color: #000000; }
         .nav-btn:active { transform: scale(0.96); }
         
-        .logo { font-size: 1rem; font-weight: 900; color: #FFD700; background-color: #1a1a1a; display: inline-block; padding: 3px 10px; border-radius: 40px; margin-bottom: 6px; }
-        .stats-cards { display: flex; gap: 5px; margin: 6px 0; }
-        .stat-card { background-color: #1a1a1a; border-radius: 12px; padding: 5px; flex: 1; text-align: center; }
-        .stat-value { font-size: 1rem; font-weight: bold; color: #FFD700; }
-        .stat-label { font-size: 0.45rem; color: #aaa; }
-        .progress-bar-container { background-color: #1a1a1a; border-radius: 20px; height: 5px; margin: 6px 0; overflow: hidden; }
+        .logo { font-size: 1.1rem; font-weight: 900; color: #FFD700; background-color: #1a1a1a; display: inline-block; padding: 4px 12px; border-radius: 40px; margin-bottom: 8px; }
+        .stats-cards { display: flex; gap: 6px; margin: 8px 0; }
+        .stat-card { background-color: #1a1a1a; border-radius: 12px; padding: 6px; flex: 1; text-align: center; }
+        .stat-value { font-size: 1.1rem; font-weight: bold; color: #FFD700; }
+        .stat-label { font-size: 0.5rem; color: #aaa; }
+        .progress-bar-container { background-color: #1a1a1a; border-radius: 20px; height: 6px; margin: 8px 0; overflow: hidden; }
         .progress-fill { background-color: #2e7d32; width: 0%; height: 100%; transition: width 0.3s; }
-        .progress-text { color: #FFD700; font-size: 0.55rem; text-align: center; margin-bottom: 2px; }
-        .current-day-text { color: #FFD700; margin: 4px 0; font-size: 0.65rem; text-align: center; font-weight: bold; }
+        .progress-text { color: #FFD700; font-size: 0.6rem; text-align: center; margin-bottom: 3px; }
+        .current-day-text { color: #FFD700; margin: 5px 0; font-size: 0.7rem; text-align: center; font-weight: bold; }
         
-        .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; margin: 6px 0; }
-        .day-cell { background-color: #1a1a1a; color: #FFD700; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-weight: bold; font-size: 0.7rem; cursor: pointer; transition: all 0.1s; }
+        .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin: 8px 0; }
+        .day-cell { background-color: #1a1a1a; color: #FFD700; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-weight: bold; font-size: 0.75rem; cursor: pointer; transition: all 0.1s; }
         .day-cell.completed { background-color: #2e7d32; color: white; }
         .day-cell.current { border: 2px solid #FFD700; }
         .day-cell:active { transform: scale(0.94); }
         
-        .action-panel { display: flex; gap: 5px; margin: 6px 0; }
-        .action-btn { flex: 1; padding: 7px; border: none; border-radius: 40px; font-weight: bold; font-size: 0.65rem; cursor: pointer; transition: all 0.1s; }
+        .action-panel { display: flex; gap: 6px; margin: 8px 0; }
+        .action-btn { flex: 1; padding: 8px; border: none; border-radius: 40px; font-weight: bold; font-size: 0.7rem; cursor: pointer; transition: all 0.1s; }
         .action-btn:active { transform: scale(0.96); }
         .success-btn { background-color: #2e7d32; color: white; }
         .fail-btn { background-color: #8b0000; color: white; }
         .help-btn { background-color: #FF5722; color: white; }
-        .reset-btn { background-color: #8b0000; color: white; border: none; padding: 6px; border-radius: 25px; width: 100%; margin-top: 5px; cursor: pointer; font-size: 0.6rem; font-weight: bold; }
+        .reset-btn { background-color: #8b0000; color: white; border: none; padding: 7px; border-radius: 25px; width: 100%; margin-top: 6px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
         .reset-btn:active { transform: scale(0.97); }
         
         .history-list, .achievements-list { max-height: 280px; overflow-y: auto; scrollbar-width: none; margin-top: 4px; }
@@ -63,7 +63,6 @@
         .achievement-status { font-size: 0.5rem; color: #666; }
         .achievement-date { font-size: 0.5rem; color: #2e7d32; }
         
-        /* Белый текст в истории */
         .history-date, .history-days, .history-end { color: white; }
         .history-end { color: #ff8888; }
         
@@ -74,30 +73,35 @@
         .support-btn:active { transform: scale(0.97); }
         
         .emergency-modal, .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); display: flex; align-items: center; justify-content: center; z-index: 4000; cursor: pointer; }
-        .emergency-card, .modal-content { background: #1a1a1a; border-radius: 24px; padding: 16px; max-width: 260px; width: 90%; text-align: center; border: 2px solid #FF5722; }
-        .emergency-warning { color: #FF5722; font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; }
-        .emergency-text { color: #ccc; font-size: 0.7rem; margin: 8px 0; text-align: left; }
+        .emergency-card { background: #1a1a1a; border-radius: 24px; padding: 18px; max-width: 280px; width: 90%; text-align: center; border: 2px solid #FF5722; }
+        .emergency-card * { color: white; }
+        .emergency-warning { color: #FF5722; font-size: 1rem; font-weight: bold; margin-bottom: 8px; }
+        .emergency-text { color: #ccc; font-size: 0.75rem; margin: 8px 0; text-align: left; }
         .emergency-steps { text-align: left; margin: 8px 0; }
-        .emergency-step { color: #FFD700; margin: 5px 0; font-size: 0.65rem; }
-        .timer-display { font-size: 1.3rem; font-weight: bold; color: #FF5722; margin: 8px 0; }
-        .emergency-btn { background-color: #FF5722; color: white; border: none; padding: 7px; border-radius: 40px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; font-size: 0.75rem; }
+        .emergency-step { color: white; margin: 6px 0; font-size: 0.7rem; font-weight: bold; }
+        .timer-display { font-size: 1.4rem; font-weight: bold; color: #FF5722; margin: 8px 0; }
+        .emergency-btn { background-color: #FF5722; color: white; border: none; padding: 8px; border-radius: 40px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 6px; font-size: 0.8rem; }
         .emergency-btn:active { transform: scale(0.97); }
-        .emergency-btn.secondary { background-color: #333; margin-top: 5px; }
-        .quote-text { font-size: 0.8rem; color: #FFD700; margin: 8px 0; }
-        .modal-content button { background-color: #FFD700; color: #000; border: none; padding: 5px 12px; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 4px; }
+        .emergency-btn.secondary { background-color: #333; margin-top: 6px; }
+        
+        .modal-content { background: #1a1a1a; border-radius: 24px; padding: 18px; max-width: 280px; width: 90%; text-align: center; border: 2px solid #FF5722; }
+        .quote-text { font-size: 0.85rem; color: #FFD700; margin: 8px 0; }
+        .modal-content button { background-color: #FFD700; color: #000; border: none; padding: 6px 14px; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 4px; }
         .modal-content button:active { transform: scale(0.96); }
         .modal-content button#cancel { background-color: #333; color: #FFD700; border: 1px solid #FFD700; }
         .modal-content button#save { background-color: #FF5722; color: white; }
-        .modal-content textarea { width: 100%; padding: 5px; border-radius: 12px; background: #000; color: #FFD700; border: 1px solid #FFD700; margin: 6px 0; font-size: 0.65rem; font-family: inherit; }
+        .modal-content h3 { color: #FFD700; margin-bottom: 6px; font-size: 0.9rem; }
+        .modal-content textarea { width: 100%; padding: 6px; border-radius: 12px; background: #000; color: white; border: 1px solid #FFD700; margin: 6px 0; font-size: 0.7rem; font-family: inherit; }
+        .modal-content textarea::placeholder { color: #888; }
         
         @media (min-width: 600px) {
             body { padding: 20px; }
-            .container { max-width: 500px; }
-            .card { padding: 16px; }
-            .screen { min-height: 500px; }
-            .day-cell { font-size: 0.85rem; }
-            .action-btn { padding: 9px; font-size: 0.75rem; }
-            .stat-value { font-size: 1.2rem; }
+            .container { max-width: 520px; }
+            .card { padding: 18px; }
+            .screen { min-height: 520px; }
+            .day-cell { font-size: 0.9rem; }
+            .action-btn { padding: 10px; font-size: 0.8rem; }
+            .stat-value { font-size: 1.3rem; }
         }
     </style>
 </head>
@@ -266,37 +270,46 @@
 
     function showEmergency() { const warningModal = document.createElement('div'); warningModal.className = 'emergency-modal'; warningModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning">⚠️ СТОП ⚠️</div><div class="emergency-text">ДРУГ, ЕСЛИ ТЫ НЕ НА ГРАНИ СРЫВА — ЗАКРОЙ.</div><button class="emergency-btn" id="emergencyConfirmBtn">😰 НЕТ, Я НА ГРАНИ</button><button class="emergency-btn secondary" id="emergencyCancelBtn">← НАЗАД</button></div>`; document.body.appendChild(warningModal); warningModal.querySelector('#emergencyConfirmBtn').onclick = () => { warningModal.remove(); showEmergencySteps(); }; warningModal.querySelector('#emergencyCancelBtn').onclick = () => warningModal.remove(); }
 
-    function showEmergencySteps() { let timerSeconds = 900, timerInterval; const stepsModal = document.createElement('div'); stepsModal.className = 'emergency-modal'; stepsModal.innerHTML = `<div class="emergency-card"><div style="color:#FF5722; font-weight:bold;">🔴 ТЫ НА ГРАНИ</div><div class="emergency-steps"><div>1. ВСТАНЬ И ВЫЙДИ</div><div>2. ХОЛОДНАЯ ВОДА</div><div>3. 20 ПРИСЕДАНИЙ</div><div>4. ДЫШИ: 4-7-8</div></div><div class="timer-display" id="emergencyTimerDisplay">15:00</div><button class="emergency-btn" id="emergencyRescueBtn">✅ Я СПАСЁН</button></div>`; document.body.appendChild(stepsModal); function updateTimer() { const minutes = Math.floor(timerSeconds / 60); const seconds = timerSeconds % 60; const d = document.getElementById('emergencyTimerDisplay'); if (d) d.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`; if (timerSeconds <= 0) { if (timerInterval) clearInterval(timerInterval); } else { timerSeconds--; } } timerInterval = setInterval(updateTimer, 1000); updateTimer(); stepsModal.querySelector('#emergencyRescueBtn').onclick = () => { if (timerInterval) clearInterval(timerInterval); stepsModal.remove(); showPopup("✅ Ты справился."); }; }
+    function showEmergencySteps() { let timerSeconds = 900, timerInterval; const stepsModal = document.createElement('div'); stepsModal.className = 'emergency-modal'; stepsModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning" style="color:#FF5722;">🔴 ТЫ НА ГРАНИ</div><div class="emergency-steps"><div class="emergency-step">1. ВСТАНЬ И ВЫЙДИ</div><div class="emergency-step">2. ХОЛОДНАЯ ВОДА</div><div class="emergency-step">3. 20 ПРИСЕДАНИЙ</div><div class="emergency-step">4. ДЫШИ: 4-7-8</div></div><div class="timer-display" id="emergencyTimerDisplay">15:00</div><button class="emergency-btn" id="emergencyRescueBtn">✅ Я СПАСЁН</button></div>`; document.body.appendChild(stepsModal); function updateTimer() { const minutes = Math.floor(timerSeconds / 60); const seconds = timerSeconds % 60; const d = document.getElementById('emergencyTimerDisplay'); if (d) d.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`; if (timerSeconds <= 0) { if (timerInterval) clearInterval(timerInterval); } else { timerSeconds--; } } timerInterval = setInterval(updateTimer, 1000); updateTimer(); stepsModal.querySelector('#emergencyRescueBtn').onclick = () => { if (timerInterval) clearInterval(timerInterval); stepsModal.remove(); showPopup("✅ Ты справился."); }; }
 
-    function applyLanguage() { const isRu = settings.language === 'ru'; document.querySelectorAll('.nav-btn').forEach((btn,i) => { const texts = isRu ? ['📅 Трекер','📋 История','🏆 Достижения','⚙️ Настройки'] : ['📅 Tracker','📋 History','🏆 Achievements','⚙️ Settings']; if(btn.dataset.screen === 'tracker') btn.innerHTML = texts[0]; if(btn.dataset.screen === 'history') btn.innerHTML = texts[1]; if(btn.dataset.screen === 'achievements') btn.innerHTML = texts[2]; if(btn.dataset.screen === 'settings') btn.innerHTML = texts[3]; }); document.getElementById('completeBtn').innerHTML = isRu ? '✅ Выполнил' : '✅ Done'; document.getElementById('failBtn').innerHTML = isRu ? '❌ Сорвался' : '❌ Relapse'; document.getElementById('helpBtn').innerHTML = isRu ? '🆘 ПОМОГИТЕ' : '🆘 HELP'; document.getElementById('manualResetBtn').innerHTML = isRu ? '🔄 Начать новую попытку' : '🔄 New attempt'; document.getElementById('historyScreen').querySelector('.logo').innerHTML = isRu ? '📜 История' : '📜 History'; document.getElementById('achievementsScreen').querySelector('.logo').innerHTML = isRu ? '🏆 Достижения' : '🏆 Achievements'; document.getElementById('settingsScreen').querySelector('.logo').innerHTML = isRu ? '⚙️ Настройки' : '⚙️ Settings'; }
+    function applyLanguage() { const isRu = settings.language === 'ru'; document.querySelectorAll('.nav-btn').forEach((btn,i) => { const texts = isRu ? ['📅 Трекер','📋 История','🏆 Достижения','⚙️ Настройки'] : ['📅 Tracker','📋 History','🏆 Achievements','⚙️ Settings']; if(btn.dataset.screen === 'tracker') btn.innerHTML = texts[0]; if(btn.dataset.screen === 'history') btn.innerHTML = texts[1];         if(btn.dataset.screen === 'achievements') btn.innerHTML = texts[2];
+        if(btn.dataset.screen === 'settings') btn.innerHTML = texts[3];
+    });
+    document.getElementById('completeBtn').innerHTML = isRu ? '✅ Выполнил' : '✅ Done';
+    document.getElementById('failBtn').innerHTML = isRu ? '❌ Сорвался' : '❌ Relapse';
+    document.getElementById('helpBtn').innerHTML = isRu ? '🆘 ПОМОГИТЕ' : '🆘 HELP';
+    document.getElementById('manualResetBtn').innerHTML = isRu ? '🔄 Начать новую попытку' : '🔄 New attempt';
+    document.getElementById('historyScreen').querySelector('.logo').innerHTML = isRu ? '📜 История' : '📜 History';
+    document.getElementById('achievementsScreen').querySelector('.logo').innerHTML = isRu ? '🏆 Достижения' : '🏆 Achievements';
+    document.getElementById('settingsScreen').querySelector('.logo').innerHTML = isRu ? '⚙️ Настройки' : '⚙️ Settings';
+}
 
-    function switchScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`${screenId}Screen`).classList.add('active');
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.querySelector(`.nav-btn[data-screen="${screenId}"]`).classList.add('active');
-        if (screenId === 'history') render
-                if (screenId === 'history') renderHistory();
-        if (screenId === 'achievements') renderAchievements();
-    }
+function switchScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(`${screenId}Screen`).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.nav-btn[data-screen="${screenId}"]`).classList.add('active');
+    if (screenId === 'history') renderHistory();
+    if (screenId === 'achievements') renderAchievements();
+}
 
-    loadData();
-    initWelcome();
-    renderAll();
-    
-    document.getElementById('languageSelect').value = settings.language;
-    document.getElementById('languageSelect').onchange = () => {
-        settings.language = document.getElementById('languageSelect').value;
-        localStorage.setItem('choice_settings', JSON.stringify(settings));
-        applyLanguage();
-    };
-    document.getElementById('supportBtn').onclick = () => window.location.href = 'https://t.me/Piholaa';
+loadData();
+initWelcome();
+renderAll();
+
+document.getElementById('languageSelect').value = settings.language;
+document.getElementById('languageSelect').onchange = () => {
+    settings.language = document.getElementById('languageSelect').value;
+    localStorage.setItem('choice_settings', JSON.stringify(settings));
     applyLanguage();
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => switchScreen(btn.dataset.screen));
-    document.getElementById('completeBtn').onclick = completeDay;
-    document.getElementById('failBtn').onclick = failDay;
-    document.getElementById('manualResetBtn').onclick = manualReset;
-    document.getElementById('helpBtn').onclick = showEmergency;
+};
+document.getElementById('supportBtn').onclick = () => window.location.href = 'https://t.me/Piholaa';
+applyLanguage();
+document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => switchScreen(btn.dataset.screen));
+document.getElementById('completeBtn').onclick = completeDay;
+document.getElementById('failBtn').onclick = failDay;
+document.getElementById('manualResetBtn').onclick = manualReset;
+document.getElementById('helpBtn').onclick = showEmergency;
 </script>
 </body>
-</html>
+</html> 
