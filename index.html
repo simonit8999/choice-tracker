@@ -7,11 +7,12 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background-color: #FFD700; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 10px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .container { max-width: 440px; width: 100%; margin: 0 auto; }
-        .card { background-color: #000000; border-radius: 28px; padding: 14px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .container { max-width: 480px; width: 100%; margin: 0 auto; }
+        .card { background-color: #000000; border-radius: 28px; padding: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         
-        .screen { min-height: 480px; display: none; flex-direction: column; }
+        .screen { min-height: 560px; display: none; flex-direction: column; }
         .screen.active { display: flex; }
+        #trackerScreen, #historyScreen, #achievementsScreen, #settingsScreen { min-height: 560px; }
         
         .welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #FFD700; display: flex; align-items: center; justify-content: center; z-index: 3000; }
         .welcome-card { background-color: #000000; border-radius: 28px; padding: 20px; max-width: 280px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
@@ -53,7 +54,7 @@
         .reset-btn { background-color: #8b0000; color: white; border: none; padding: 7px; border-radius: 25px; width: 100%; margin-top: 6px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
         .reset-btn:active { transform: scale(0.97); }
         
-        .history-list, .achievements-list { max-height: 280px; overflow-y: auto; scrollbar-width: none; margin-top: 4px; }
+        .history-list, .achievements-list { max-height: 400px; overflow-y: auto; scrollbar-width: none; margin-top: 4px; }
         .history-list::-webkit-scrollbar, .achievements-list::-webkit-scrollbar { display: none; }
         .history-item, .achievement-item { background-color: #1a1a1a; border-radius: 12px; padding: 6px; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; cursor: pointer; border: 1px solid #333; }
         .achievement-item.completed { border-color: #FFD700; }
@@ -78,7 +79,7 @@
         .emergency-warning { color: #FF5722; font-size: 1rem; font-weight: bold; margin-bottom: 8px; }
         .emergency-text { color: #ccc; font-size: 0.75rem; margin: 8px 0; text-align: left; }
         .emergency-steps { text-align: left; margin: 8px 0; }
-        .emergency-step { color: white; margin: 6px 0; font-size: 0.7rem; font-weight: bold; }
+        .emergency-step { color: white !important; margin: 6px 0; font-size: 0.7rem; font-weight: bold; }
         .timer-display { font-size: 1.4rem; font-weight: bold; color: #FF5722; margin: 8px 0; }
         .emergency-btn { background-color: #FF5722; color: white; border: none; padding: 8px; border-radius: 40px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 6px; font-size: 0.8rem; }
         .emergency-btn:active { transform: scale(0.97); }
@@ -96,12 +97,14 @@
         
         @media (min-width: 600px) {
             body { padding: 20px; }
-            .container { max-width: 520px; }
-            .card { padding: 18px; }
-            .screen { min-height: 520px; }
-            .day-cell { font-size: 0.9rem; }
-            .action-btn { padding: 10px; font-size: 0.8rem; }
-            .stat-value { font-size: 1.3rem; }
+            .container { max-width: 560px; }
+            .card { padding: 20px; }
+            .screen { min-height: 600px; }
+            #trackerScreen, #historyScreen, #achievementsScreen, #settingsScreen { min-height: 600px; }
+            .day-cell { font-size: 0.95rem; }
+            .action-btn { padding: 10px; font-size: 0.85rem; }
+            .stat-value { font-size: 1.4rem; }
+            .history-list, .achievements-list { max-height: 440px; }
         }
     </style>
 </head>
@@ -270,46 +273,76 @@
 
     function showEmergency() { const warningModal = document.createElement('div'); warningModal.className = 'emergency-modal'; warningModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning">⚠️ СТОП ⚠️</div><div class="emergency-text">ДРУГ, ЕСЛИ ТЫ НЕ НА ГРАНИ СРЫВА — ЗАКРОЙ.</div><button class="emergency-btn" id="emergencyConfirmBtn">😰 НЕТ, Я НА ГРАНИ</button><button class="emergency-btn secondary" id="emergencyCancelBtn">← НАЗАД</button></div>`; document.body.appendChild(warningModal); warningModal.querySelector('#emergencyConfirmBtn').onclick = () => { warningModal.remove(); showEmergencySteps(); }; warningModal.querySelector('#emergencyCancelBtn').onclick = () => warningModal.remove(); }
 
-    function showEmergencySteps() { let timerSeconds = 900, timerInterval; const stepsModal = document.createElement('div'); stepsModal.className = 'emergency-modal'; stepsModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning" style="color:#FF5722;">🔴 ТЫ НА ГРАНИ</div><div class="emergency-steps"><div class="emergency-step">1. ВСТАНЬ И ВЫЙДИ</div><div class="emergency-step">2. ХОЛОДНАЯ ВОДА</div><div class="emergency-step">3. 20 ПРИСЕДАНИЙ</div><div class="emergency-step">4. ДЫШИ: 4-7-8</div></div><div class="timer-display" id="emergencyTimerDisplay">15:00</div><button class="emergency-btn" id="emergencyRescueBtn">✅ Я СПАСЁН</button></div>`; document.body.appendChild(stepsModal); function updateTimer() { const minutes = Math.floor(timerSeconds / 60); const seconds = timerSeconds % 60; const d = document.getElementById('emergencyTimerDisplay'); if (d) d.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`; if (timerSeconds <= 0) { if (timerInterval) clearInterval(timerInterval); } else { timerSeconds--; } } timerInterval = setInterval(updateTimer, 1000); updateTimer(); stepsModal.querySelector('#emergencyRescueBtn').onclick = () => { if (timerInterval) clearInterval(timerInterval); stepsModal.remove(); showPopup("✅ Ты справился."); }; }
+    function showEmergencySteps() { 
+        let timerSeconds = 900, timerInterval; 
+        const stepsModal = document.createElement('div'); 
+        stepsModal.className = 'emergency-modal'; 
+        stepsModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning" style="color:#FF5722;">🔴 ТЫ НА ГРАНИ</div><div class="emergency-steps"><div class="emergency-step">1. ВСТАНЬ И ВЫЙДИ</div><div class="emergency-step">2. ХОЛОДНАЯ ВОДА</div><div class="emergency-step">3. 20 ПРИСЕДАНИЙ</div><div class="emergency-step">4. ДЫШИ: 4-7-8</div></div><div class="timer-display" id="emergencyTimerDisplay">15:00</div><button class="emergency-btn" id="emergencyRescueBtn">✅ Я СПАСЁН</button></div>`; 
+        document.body.appendChild(stepsModal); 
+        function updateTimer() { 
+            const minutes = Math.floor(timerSeconds / 60); 
+            const seconds = timerSeconds % 60; 
+            const d = document.getElementById('emergencyTimerDisplay'); 
+            if (d) d.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`; 
+            if (timerSeconds <= 0) { 
+                if (timerInterval) clearInterval(timerInterval); 
+            } else { 
+                timerSeconds--; 
+            } 
+        } 
+        timerInterval = setInterval(updateTimer, 1000); 
+        updateTimer(); 
+        stepsModal.querySelector('#emergencyRescueBtn').onclick = () => { 
+            if (timerInterval) clearInterval(timerInterval); 
+            stepsModal.remove(); 
+            showPopup("✅ Ты справился."); 
+               };
+    }
 
-    function applyLanguage() { const isRu = settings.language === 'ru'; document.querySelectorAll('.nav-btn').forEach((btn,i) => { const texts = isRu ? ['📅 Трекер','📋 История','🏆 Достижения','⚙️ Настройки'] : ['📅 Tracker','📋 History','🏆 Achievements','⚙️ Settings']; if(btn.dataset.screen === 'tracker') btn.innerHTML = texts[0]; if(btn.dataset.screen === 'history') btn.innerHTML = texts[1];         if(btn.dataset.screen === 'achievements') btn.innerHTML = texts[2];
-        if(btn.dataset.screen === 'settings') btn.innerHTML = texts[3];
-    });
-    document.getElementById('completeBtn').innerHTML = isRu ? '✅ Выполнил' : '✅ Done';
-    document.getElementById('failBtn').innerHTML = isRu ? '❌ Сорвался' : '❌ Relapse';
-    document.getElementById('helpBtn').innerHTML = isRu ? '🆘 ПОМОГИТЕ' : '🆘 HELP';
-    document.getElementById('manualResetBtn').innerHTML = isRu ? '🔄 Начать новую попытку' : '🔄 New attempt';
-    document.getElementById('historyScreen').querySelector('.logo').innerHTML = isRu ? '📜 История' : '📜 History';
-    document.getElementById('achievementsScreen').querySelector('.logo').innerHTML = isRu ? '🏆 Достижения' : '🏆 Achievements';
-    document.getElementById('settingsScreen').querySelector('.logo').innerHTML = isRu ? '⚙️ Настройки' : '⚙️ Settings';
-}
+    function applyLanguage() { 
+        const isRu = settings.language === 'ru'; 
+        document.querySelectorAll('.nav-btn').forEach((btn,i) => { 
+            const texts = isRu ? ['📅 Трекер','📋 История','🏆 Достижения','⚙️ Настройки'] : ['📅 Tracker','📋 History','🏆 Achievements','⚙️ Settings']; 
+            if(btn.dataset.screen === 'tracker') btn.innerHTML = texts[0]; 
+            if(btn.dataset.screen === 'history') btn.innerHTML = texts[1]; 
+            if(btn.dataset.screen === 'achievements') btn.innerHTML = texts[2]; 
+            if(btn.dataset.screen === 'settings') btn.innerHTML = texts[3]; 
+        }); 
+        document.getElementById('completeBtn').innerHTML = isRu ? '✅ Выполнил' : '✅ Done'; 
+        document.getElementById('failBtn').innerHTML = isRu ? '❌ Сорвался' : '❌ Relapse'; 
+        document.getElementById('helpBtn').innerHTML = isRu ? '🆘 ПОМОГИТЕ' : '🆘 HELP'; 
+        document.getElementById('manualResetBtn').innerHTML = isRu ? '🔄 Начать новую попытку' : '🔄 New attempt'; 
+        document.getElementById('historyScreen').querySelector('.logo').innerHTML = isRu ? '📜 История' : '📜 History'; 
+        document.getElementById('achievementsScreen').querySelector('.logo').innerHTML = isRu ? '🏆 Достижения' : '🏆 Achievements'; 
+        document.getElementById('settingsScreen').querySelector('.logo').innerHTML = isRu ? '⚙️ Настройки' : '⚙️ Settings'; 
+    }
 
-function switchScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(`${screenId}Screen`).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.nav-btn[data-screen="${screenId}"]`).classList.add('active');
-    if (screenId === 'history') renderHistory();
-    if (screenId === 'achievements') renderAchievements();
-}
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`${screenId}Screen`).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.nav-btn[data-screen="${screenId}"]`).classList.add('active');
+        if (screenId === 'history') renderHistory();
+        if (screenId === 'achievements') renderAchievements();
+    }
 
-loadData();
-initWelcome();
-renderAll();
-
-document.getElementById('languageSelect').value = settings.language;
-document.getElementById('languageSelect').onchange = () => {
-    settings.language = document.getElementById('languageSelect').value;
-    localStorage.setItem('choice_settings', JSON.stringify(settings));
+    loadData();
+    initWelcome();
+    renderAll();
+    
+    document.getElementById('languageSelect').value = settings.language;
+    document.getElementById('languageSelect').onchange = () => {
+        settings.language = document.getElementById('languageSelect').value;
+        localStorage.setItem('choice_settings', JSON.stringify(settings));
+        applyLanguage();
+    };
+    document.getElementById('supportBtn').onclick = () => window.location.href = 'https://t.me/Piholaa';
     applyLanguage();
-};
-document.getElementById('supportBtn').onclick = () => window.location.href = 'https://t.me/Piholaa';
-applyLanguage();
-document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => switchScreen(btn.dataset.screen));
-document.getElementById('completeBtn').onclick = completeDay;
-document.getElementById('failBtn').onclick = failDay;
-document.getElementById('manualResetBtn').onclick = manualReset;
-document.getElementById('helpBtn').onclick = showEmergency;
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => switchScreen(btn.dataset.screen));
+    document.getElementById('completeBtn').onclick = completeDay;
+    document.getElementById('failBtn').onclick = failDay;
+    document.getElementById('manualResetBtn').onclick = manualReset;
+    document.getElementById('helpBtn').onclick = showEmergency;
 </script>
 </body>
-</html> 
+</html>
