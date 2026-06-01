@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>CHOICE — 30 дней</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background-color: #FFD700; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 10px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
@@ -53,12 +54,11 @@
         .reset-btn { background-color: #8b0000; color: white; border: none; padding: 7px; border-radius: 25px; width: 100%; margin-top: 6px; cursor: pointer; font-size: 0.65rem; font-weight: bold; text-align: center; }
         .reset-btn:active { transform: scale(0.97); }
         
-        .history-list, .achievements-list { 
-            flex: 1; 
-            overflow-y: auto; 
-            scrollbar-width: none; 
-            margin-top: 4px; 
-        }
+        .sync-status { font-size: 0.55rem; color: #666; text-align: center; margin-top: 4px; }
+        .sync-status.synced { color: #2e7d32; }
+        .sync-status.error { color: #8b0000; }
+        
+        .history-list, .achievements-list { flex: 1; overflow-y: auto; scrollbar-width: none; margin-top: 4px; }
         .history-list::-webkit-scrollbar, .achievements-list::-webkit-scrollbar { display: none; }
         .history-item, .achievement-item { background-color: #1a1a1a; border-radius: 12px; padding: 8px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid #333; }
         .achievement-item.completed { border-color: #FFD700; }
@@ -79,17 +79,7 @@
         .support-btn:active { transform: scale(0.97); }
         
         .emergency-modal, .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); display: flex; align-items: center; justify-content: center; z-index: 4000; cursor: pointer; }
-        
-        .emergency-card { 
-            background: #1a1a1a; 
-            border-radius: 24px; 
-            padding: 18px; 
-            max-width: 280px; 
-            width: 90%; 
-            text-align: center; 
-            border: none; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
+        .emergency-card { background: #1a1a1a; border-radius: 24px; padding: 18px; max-width: 280px; width: 90%; text-align: center; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .emergency-card * { color: white; }
         .emergency-warning { color: #FF5722; font-size: 1rem; font-weight: bold; margin-bottom: 8px; }
         .emergency-text { color: #ccc; font-size: 0.75rem; margin: 8px 0; text-align: left; }
@@ -100,16 +90,7 @@
         .emergency-btn:active { transform: scale(0.97); }
         .emergency-btn.secondary { background-color: #333; margin-top: 6px; }
         
-        .modal-content { 
-            background: #1a1a1a; 
-            border-radius: 24px; 
-            padding: 18px; 
-            max-width: 280px; 
-            width: 90%; 
-            text-align: center; 
-            border: none; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
+        .modal-content { background: #1a1a1a; border-radius: 24px; padding: 18px; max-width: 280px; width: 90%; text-align: center; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .quote-text { font-size: 0.85rem; color: #FFD700; margin: 8px 0; }
         .modal-content button { background-color: #FFD700; color: #000; border: none; padding: 6px 14px; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 4px; font-size: 0.75rem; }
         .modal-content button:active { transform: scale(0.96); }
@@ -124,7 +105,7 @@
             .container { max-width: 520px; }
             .card { padding: 20px; }
             .screen { min-height: 580px; }
-            .day-cell { font-size: 0.85rem; }
+            .day-cell { font-size: 0.9rem; }
             .action-btn { padding: 10px; font-size: 0.8rem; }
             .stat-value { font-size: 1.3rem; }
             .history-date { font-size: 0.85rem; }
@@ -169,6 +150,7 @@
                 <button class="action-btn help-btn" id="helpBtn">🆘 ПОМОГИТЕ</button>
             </div>
             <button class="reset-btn" id="manualResetBtn">🔄 Начать новую попытку</button>
+            <div class="sync-status" id="syncStatus">💾 Данные локально</div>
         </div>
 
         <div id="historyScreen" class="screen">
@@ -203,6 +185,23 @@
 </div>
 
 <script>
+    // ========== CONFIGURATION ==========
+    const API_URL = 'https://choice-tracker-api.onrender.com';
+    const SYNC_INTERVAL = 30000; // 30 seconds
+    
+    // ========== TELEGRAM INTEGRATION ==========
+    const tg = window.Telegram?.WebApp;
+    const isTelegram = !!tg;
+    
+    if (isTelegram) {
+        tg.ready();
+        tg.expand();
+        tg.enableClosingConfirmation();
+        tg.setHeaderColor('#FFD700');
+        tg.setBackgroundColor('#FFD700');
+    }
+    
+    // ========== DATA ==========
     const quotes = {
         1: "Первый день — самый простой. Не обманывай себя.",
         2: "Твой мозг ещё не понял, что ты серьёзно. Покажи ему.",
@@ -248,39 +247,275 @@
     let achievements = JSON.parse(localStorage.getItem('choice_achievements') || '{}');
     let settings = JSON.parse(localStorage.getItem('choice_settings') || '{"language":"ru"}');
     let hasSeenWelcome = localStorage.getItem('choice_welcome_seen');
+    let lastSyncTime = 0;
+    let isCloudSyncEnabled = true;
 
+    // ========== CLOUD SYNC FUNCTIONS ==========
+    function updateSyncStatus(status) {
+        const statusEl = document.getElementById('syncStatus');
+        if (!statusEl) return;
+        
+        const statusMap = {
+            'local': { text: '💾 Данные локально', class: '' },
+            'cloud': { text: '☁️ Сохранено в облаке', class: 'synced' },
+            'loaded': { text: '📥 Загружено из облака', class: 'synced' },
+            'syncing': { text: '🔄 Синхронизация...', class: '' },
+            'error': { text: '❌ Ошибка соединения', class: 'error' }
+        };
+        
+        const config = statusMap[status] || statusMap['local'];
+        statusEl.textContent = config.text;
+        statusEl.className = 'sync-status ' + config.class;
+    }
+
+    function sendToBot(action, data = {}) {
+        if (!isTelegram) {
+            updateSyncStatus('local');
+            return;
+        }
+        
+        const payload = {
+            action: action,
+            ...data,
+            timestamp: new Date().toISOString()
+        };
+        
+        try {
+            tg.sendData(JSON.stringify(payload));
+            updateSyncStatus('synced');
+            console.log('✅ Sent to bot:', action);
+        } catch (error) {
+            console.error('Error sending to bot:', error);
+            updateSyncStatus('error');
+        }
+    }
+
+    async function syncWithCloud() {
+        if (!isTelegram || !isCloudSyncEnabled || !tg.initDataUnsafe?.user) return;
+        
+        const userId = tg.initDataUnsafe.user.id;
+        const now = Date.now();
+        
+        if (now - lastSyncTime < SYNC_INTERVAL) return;
+        
+        updateSyncStatus('syncing');
+        
+        try {
+            const response = await fetch(`${API_URL}/api/sync`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    username: tg.initDataUnsafe.user.username || '',
+                    first_name: tg.initDataUnsafe.user.first_name || '',
+                    progress: {
+                        current_streak: currentAttempt.completedDays.length,
+                        best_streak: bestStreak,
+                        total_days: totalDays,
+                        total_attempts: attemptsHistory.length
+                    },
+                    achievements: achievements
+                })
+            });
+            
+            if (response.ok) {
+                lastSyncTime = now;
+                updateSyncStatus('cloud');
+                console.log('✅ Synced with cloud');
+            } else {
+                updateSyncStatus('error');
+            }
+        } catch (error) {
+            console.log('❌ Sync failed:', error);
+            updateSyncStatus('error');
+        }
+    }
+
+    async function loadFromCloud() {
+        if (!isTelegram || !tg.initDataUnsafe?.user) return;
+        
+        const userId = tg.initDataUnsafe.user.id;
+        
+        try {
+            const response = await fetch(`${API_URL}/api/load/${userId}`);
+            const result = await response.json();
+            
+            if (result.status === 'ok' && result.data) {
+                const cloudData = result.data;
+                
+                if (cloudData.currentAttempt.total_days > totalDays) {
+                    totalDays = cloudData.currentAttempt.total_days;
+                    bestStreak = cloudData.currentAttempt.best_streak;
+                    
+                    if (cloudData.currentAttempt.achievements) {
+                        achievements = {...achievements, ...cloudData.currentAttempt.achievements};
+                        saveAchievements();
+                    }
+                    
+                    if (cloudData.attemptsHistory.length > attemptsHistory.length) {
+                        attemptsHistory = cloudData.attemptsHistory;
+                    }
+                    
+                    saveData();
+                    renderAll();
+                    updateSyncStatus('loaded');
+                    console.log('✅ Loaded from cloud');
+                }
+            }
+        } catch (error) {
+            console.log('❌ Load failed:', error);
+        }
+    }
+
+    async function logActionToCloud(action, extraData = {}) {
+        if (!isTelegram || !tg.initDataUnsafe?.user) return;
+        
+        try {
+            await fetch(`${API_URL}/api/action`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: tg.initDataUnsafe.user.id,
+                    action: action,
+                    ...extraData
+                })
+            });
+        } catch (error) {
+            console.log('Action log failed:', error);
+        }
+    }
+
+    // ========== CORE FUNCTIONS ==========
     function initWelcome() {
-        if (hasSeenWelcome) { document.getElementById('welcomeScreen').classList.add('hidden'); return; }
+        if (hasSeenWelcome) { 
+            document.getElementById('welcomeScreen').classList.add('hidden'); 
+            return; 
+        }
         document.getElementById('welcomeScreen').classList.remove('hidden');
         document.getElementById('welcomeBtn').onclick = () => {
             localStorage.setItem('choice_welcome_seen', 'true');
             document.getElementById('welcomeScreen').classList.add('hidden');
-            if (!currentAttempt.startDate) { currentAttempt.startDate = new Date().toISOString(); saveData(); renderAll(); }
+            if (!currentAttempt.startDate) { 
+                currentAttempt.startDate = new Date().toISOString(); 
+                saveData(); 
+                renderAll();
+                sendToBot('started', { startDate: currentAttempt.startDate });
+            }
         };
     }
 
     function loadData() {
-        const saved = localStorage.getItem('choice_data_v2');
-        if (saved) { const data = JSON.parse(saved); currentAttempt = data.currentAttempt || { startDate: null, completedDays: [] }; totalDays = data.totalDays || 0; bestStreak = data.bestStreak || 0; attemptsHistory = data.attemptsHistory || []; }
-        if (!hasSeenWelcome && currentAttempt.startDate) localStorage.setItem('choice_welcome_seen', 'true');
-        if (!currentAttempt.startDate && hasSeenWelcome) { currentAttempt.startDate = new Date().toISOString(); saveData(); }
+        const saved = localStorage.getItem('choice_data_v3');
+        if (saved) { 
+            const data = JSON.parse(saved); 
+            currentAttempt = data.currentAttempt || { startDate: null, completedDays: [] }; 
+            totalDays = data.totalDays || 0; 
+            bestStreak = data.bestStreak || 0; 
+            attemptsHistory = data.attemptsHistory || []; 
+        }
+        
+        if (!hasSeenWelcome && currentAttempt.startDate) {
+            localStorage.setItem('choice_welcome_seen', 'true');
+        }
+        if (!currentAttempt.startDate && hasSeenWelcome) { 
+            currentAttempt.startDate = new Date().toISOString(); 
+            saveData(); 
+        }
     }
 
-    function saveData() { localStorage.setItem('choice_data_v2', JSON.stringify({ currentAttempt, totalDays, bestStreak, attemptsHistory })); }
-    function saveAchievements() { localStorage.setItem('choice_achievements', JSON.stringify(achievements)); }
+    function saveData() { 
+        localStorage.setItem('choice_data_v3', JSON.stringify({ 
+            currentAttempt, totalDays, bestStreak, attemptsHistory 
+        }));
+        syncWithCloud();
+    }
+    
+    function saveAchievements() { 
+        localStorage.setItem('choice_achievements', JSON.stringify(achievements)); 
+    }
 
-    function checkAchievements() { const streak = currentAttempt.completedDays.length; [5,10,20,30].forEach(day => { if (streak >= day && !achievements[day]) { achievements[day] = new Date().toISOString(); saveAchievements(); showAchievementPopup(day); renderAchievements(); } }); }
-    function showAchievementPopup(day) { const a = achievementsConfig[day]; showPopup(`🏆 ${a.name}\n\n${a.message}\n\n${a.extra}`); }
-    function renderAchievements() { const container = document.getElementById('achievementsList'); if (!container) return; container.innerHTML = ''; [5,10,20,30].forEach(day => { const a = achievementsConfig[day]; const isCompleted = !!achievements[day]; const div = document.createElement('div'); div.className = 'achievement-item' + (isCompleted ? ' completed' : ''); div.innerHTML = `<div class="achievement-icon">${a.name.substring(0,2)}</div><div class="achievement-info"><div class="achievement-title">${a.name}</div><div class="achievement-status">${isCompleted ? '✅ Получено' : '🔒 Ещё не получено'}</div>${isCompleted ? `<div class="achievement-date">${new Date(achievements[day]).toLocaleDateString()}</div>` : ''}</div>`; if (isCompleted) div.onclick = () => showPopup(`${a.message}\n\n${a.extra}`); container.appendChild(div); }); }
+    function checkAchievements() { 
+        const streak = currentAttempt.completedDays.length; 
+        [5,10,20,30].forEach(day => { 
+            if (streak >= day && !achievements[day]) { 
+                achievements[day] = new Date().toISOString(); 
+                saveAchievements(); 
+                showAchievementPopup(day); 
+                renderAchievements();
+                sendToBot('achievement_unlocked', { 
+                    day: day, 
+                    name: achievementsConfig[day].name 
+                });
+            } 
+        }); 
+    }
+    
+    function showAchievementPopup(day) { 
+        const a = achievementsConfig[day]; 
+        showPopup(`🏆 ${a.name}\n\n${a.message}\n\n${a.extra}`); 
+    }
+    
+    function renderAchievements() { 
+        const container = document.getElementById('achievementsList'); 
+        if (!container) return; 
+        container.innerHTML = ''; 
+        [5,10,20,30].forEach(day => { 
+            const a = achievementsConfig[day]; 
+            const isCompleted = !!achievements[day]; 
+            const div = document.createElement('div'); 
+            div.className = 'achievement-item' + (isCompleted ? ' completed' : ''); 
+            div.innerHTML = `<div class="achievement-icon">${a.name.substring(0,2)}</div><div class="achievement-info"><div class="achievement-title">${a.name}</div><div class="achievement-status">${isCompleted ? '✅ Получено' : '🔒 Ещё не получено'}</div>${isCompleted ? `<div class="achievement-date">${new Date(achievements[day]).toLocaleDateString()}</div>` : ''}</div>`; 
+            if (isCompleted) div.onclick = () => showPopup(`${a.message}\n\n${a.extra}`); 
+            container.appendChild(div); 
+        }); 
+    }
 
-    function getCurrentDay() { if (!currentAttempt.startDate) return 1; const start = new Date(currentAttempt.startDate); start.setHours(0,0,0,0); const today = new Date(); today.setHours(0,0,0,0); const diff = Math.floor((today - start) / (1000*60*60*24)) + 1; return Math.min(Math.max(diff, 1), 30); }
-    function getProgressPercent() { return (currentAttempt.completedDays.length / 30) * 100; }
-    function renderAll() { renderTracker(); renderHistory(); renderAchievements(); }
+    function getCurrentDay() { 
+        if (!currentAttempt.startDate) return 1; 
+        const start = new Date(currentAttempt.startDate); 
+        start.setHours(0,0,0,0); 
+        const today = new Date(); 
+        today.setHours(0,0,0,0); 
+        const diff = Math.floor((today - start) / (1000*60*60*24)) + 1; 
+        return Math.min(Math.max(diff, 1), 30); 
+    }
+    
+    function getProgressPercent() { 
+        return (currentAttempt.completedDays.length / 30) * 100; 
+    }
+    
+    function renderAll() { 
+        renderTracker(); 
+        renderHistory(); 
+        renderAchievements(); 
+    }
 
     function renderTracker() {
-        const grid = document.getElementById('daysGrid'); if (!grid) return; grid.innerHTML = ''; const currentDay = getCurrentDay();
-        for (let d = 1; d <= 30; d++) { const cell = document.createElement('div'); cell.className = 'day-cell'; if (currentAttempt.completedDays.includes(d)) cell.classList.add('completed'); if (d === currentDay && !currentAttempt.completedDays.includes(d)) cell.classList.add('current'); cell.textContent = d; cell.onclick = () => { if (currentAttempt.completedDays.includes(d)) showPopup(quotes[d]); else if (d === currentDay) showPopup(`Сегодня день ${d}.`); else if (d < currentDay) showPopup(`День ${d} пропущен. Нажми «Выполнил».`); else showPopup(`День ${d} ещё не наступил.`); }; grid.appendChild(cell); }
-        const percent = getProgressPercent(); document.getElementById('progressFill').style.width = `${percent}%`; document.getElementById('progressPercent').innerHTML = `${Math.round(percent)}% завершено`; document.getElementById('currentDayText').innerHTML = `📅 День ${getCurrentDay()} из 30`; document.getElementById('totalDaysStat').textContent = totalDays; document.getElementById('bestStreakStat').textContent = bestStreak; document.getElementById('attemptsStat').textContent = attemptsHistory.length;
+        const grid = document.getElementById('daysGrid'); 
+        if (!grid) return; 
+        grid.innerHTML = ''; 
+        const currentDay = getCurrentDay();
+        for (let d = 1; d <= 30; d++) { 
+            const cell = document.createElement('div'); 
+            cell.className = 'day-cell'; 
+            if (currentAttempt.completedDays.includes(d)) cell.classList.add('completed'); 
+            if (d === currentDay && !currentAttempt.completedDays.includes(d)) cell.classList.add('current'); 
+            cell.textContent = d; 
+            cell.onclick = () => { 
+                if (currentAttempt.completedDays.includes(d)) showPopup(quotes[d]); 
+                else if (d === currentDay) showPopup(`Сегодня день ${d}.`); 
+                else if (d < currentDay) showPopup(`День ${d} пропущен. Нажми «Выполнил».`); 
+                else showPopup(`День ${d} ещё не наступил.`); 
+            }; 
+            grid.appendChild(cell); 
+        }
+        const percent = getProgressPercent(); 
+        document.getElementById('progressFill').style.width = `${percent}%`; 
+        document.getElementById('progressPercent').innerHTML = `${Math.round(percent)}% завершено`; 
+        document.getElementById('currentDayText').innerHTML = `📅 День ${getCurrentDay()} из 30`; 
+        document.getElementById('totalDaysStat').textContent = totalDays; 
+        document.getElementById('bestStreakStat').textContent = bestStreak; 
+        document.getElementById('attemptsStat').textContent = attemptsHistory.length; 
     }
 
     function renderHistory() { 
@@ -296,7 +531,7 @@
             const end = att.endDate ? new Date(att.endDate).toLocaleDateString() : '—'; 
             const div = document.createElement('div'); 
             div.className = 'history-item'; 
-            div.innerHTML = `<div class="history-date">📅 ${start} — ${end}</div><div class="history-days">✅ Выполнено дней: ${att.daysCompleted}</div><div class="history-end">❌ ${att.endReason}</div>`; 
+                        div.innerHTML = `<div class="history-date">📅 ${start} — ${end}</div><div class="history-days">✅ Выполнено дней: ${att.daysCompleted}</div><div class="history-end">❌ ${att.endReason}</div>`; 
             container.appendChild(div); 
         }); 
     }
@@ -324,7 +559,19 @@
     }
 
     function endAttempt(reason) { 
-        attemptsHistory.push({ startDate: currentAttempt.startDate, daysCompleted: currentAttempt.completedDays.length, endReason: reason, endDate: new Date().toISOString() }); 
+        // Логируем в облако
+        logActionToCloud('relapse', {
+            completed_days: currentAttempt.completedDays.length,
+            reason: reason,
+            start_date: currentAttempt.startDate
+        });
+        
+        attemptsHistory.push({ 
+            startDate: currentAttempt.startDate, 
+            daysCompleted: currentAttempt.completedDays.length, 
+            endReason: reason, 
+            endDate: new Date().toISOString() 
+        }); 
         currentAttempt = { startDate: new Date().toISOString(), completedDays: [] }; 
         saveData(); 
         renderAll(); 
@@ -334,16 +581,31 @@
         const day = getCurrentDay(); 
         if (day > 30) { showPopup("30 дней завершено!"); return; } 
         if (currentAttempt.completedDays.includes(day)) { showPopup("День уже выполнен"); return; } 
+        
         showPopup(quotes[day]); 
         currentAttempt.completedDays.push(day); 
         totalDays++; 
-        if (currentAttempt.completedDays.length > bestStreak) bestStreak = currentAttempt.completedDays.length; 
+        if (currentAttempt.completedDays.length > bestStreak) {
+            bestStreak = currentAttempt.completedDays.length; 
+        }
         saveData(); 
         renderAll(); 
         checkAchievements(); 
+        
+        // Отправляем в бота
+        sendToBot('day_completed', {
+            day: day,
+            streak: currentAttempt.completedDays.length,
+            total_days: totalDays,
+            best_streak: bestStreak
+        });
+        
         if (currentAttempt.completedDays.length === 30) { 
             setTimeout(() => { 
                 showPopup("🏆 Ты прошёл 30 дней! Поздравляю!"); 
+                sendToBot('challenge_completed', {
+                    total_attempts: attemptsHistory.length + 1
+                });
                 endAttempt("Победа! 30 дней"); 
             }, 500); 
         } 
@@ -353,16 +615,27 @@
         const day = getCurrentDay(); 
         if (day > 30) { showPopup("Ты уже прошёл 30 дней"); return; } 
         if (currentAttempt.completedDays.includes(day)) { showPopup("Этот день уже выполнен"); return; } 
+        
         showReasonModal((reason) => { 
-            showPopup(`❌ Срыв на дне ${day}\nТвои ${currentAttempt.completedDays.length} дня(ей) ушли в копилку`); 
+            const completedDays = currentAttempt.completedDays.length;
+            showPopup(`❌ Срыв на дне ${day}\nТвои ${completedDays} дня(ей) ушли в копилку`); 
+            
+            // Отправляем в бота
+            sendToBot('relapse', {
+                day: day,
+                completed_days: completedDays,
+                reason: reason
+            });
+            
             endAttempt(`Срыв на дне ${day}. Причина: ${reason}`); 
         }); 
     }
 
     function manualReset() { 
         if (confirm("Начать новую попытку?")) { 
-            if (currentAttempt.completedDays.length > 0) endAttempt("Ручной сброс"); 
-            else { 
+            if (currentAttempt.completedDays.length > 0) {
+                endAttempt("Ручной сброс"); 
+            } else { 
                 currentAttempt.startDate = new Date().toISOString(); 
                 saveData(); 
                 renderAll(); 
@@ -378,6 +651,8 @@
         warningModal.querySelector('#emergencyConfirmBtn').onclick = () => { 
             warningModal.remove(); 
             showEmergencySteps(); 
+            // Логируем использование SOS
+            sendToBot('sos_activated', { streak: currentAttempt.completedDays.length });
         }; 
         warningModal.querySelector('#emergencyCancelBtn').onclick = () => warningModal.remove(); 
     }
@@ -386,8 +661,9 @@
         let timerSeconds = 900, timerInterval; 
         const stepsModal = document.createElement('div'); 
         stepsModal.className = 'emergency-modal'; 
-               stepsModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning" style="color:#FF5722;">🔴 ТЫ НА ГРАНИ</div><div class="emergency-steps"><div class="emergency-step">1. ВСТАНЬ И ВЫЙДИ</div><div class="emergency-step">2. ХОЛОДНАЯ ВОДА</div><div class="emergency-step">3. 20 ПРИСЕДАНИЙ</div><div class="emergency-step">4. ДЫШИ: 4-7-8</div></div><div class="timer-display" id="emergencyTimerDisplay">15:00</div><button class="emergency-btn" id="emergencyRescueBtn">✅ Я СПАСЁН</button></div>`; 
+        stepsModal.innerHTML = `<div class="emergency-card"><div class="emergency-warning" style="color:#FF5722;">🔴 ТЫ НА ГРАНИ</div><div class="emergency-steps"><div class="emergency-step">1. ВСТАНЬ И ВЫЙДИ</div><div class="emergency-step">2. ХОЛОДНАЯ ВОДА</div><div class="emergency-step">3. 20 ПРИСЕДАНИЙ</div><div class="emergency-step">4. ДЫШИ: 4-7-8</div></div><div class="timer-display" id="emergencyTimerDisplay">15:00</div><button class="emergency-btn" id="emergencyRescueBtn">✅ Я СПАСЁН</button></div>`; 
         document.body.appendChild(stepsModal); 
+        
         function updateTimer() { 
             const minutes = Math.floor(timerSeconds / 60); 
             const seconds = timerSeconds % 60; 
@@ -399,12 +675,15 @@
                 timerSeconds--; 
             } 
         } 
+        
         timerInterval = setInterval(updateTimer, 1000); 
         updateTimer(); 
+        
         stepsModal.querySelector('#emergencyRescueBtn').onclick = () => { 
             if (timerInterval) clearInterval(timerInterval); 
             stepsModal.remove(); 
             showPopup("✅ Ты справился."); 
+            sendToBot('sos_resolved', { streak: currentAttempt.completedDays.length });
         }; 
     }
 
@@ -417,13 +696,15 @@
             if(btn.dataset.screen === 'achievements') btn.innerHTML = texts[2]; 
             if(btn.dataset.screen === 'settings') btn.innerHTML = texts[3]; 
         }); 
-        document.getElementById('completeBtn').innerHTML = isRu ? '✅ Выполнил' : '✅ Done'; 
-        document.getElementById('failBtn').innerHTML = isRu ? '❌ Сорвался' : '❌ Relapse'; 
-        document.getElementById('helpBtn').innerHTML = isRu ? '🆘 ПОМОГИТЕ' : '🆘 HELP'; 
-        document.getElementById('manualResetBtn').innerHTML = isRu ? '🔄 Начать новую попытку' : '🔄 New attempt'; 
-        document.getElementById('historyScreen').querySelector('.logo').innerHTML = isRu ? '📜 История' : '📜 History'; 
-        document.getElementById('achievementsScreen').querySelector('.logo').innerHTML = isRu ? '🏆 Достижения' : '🏆 Achievements'; 
-        document.getElementById('settingsScreen').querySelector('.logo').innerHTML = isRu ? '⚙️ Настройки' : '⚙️ Settings'; 
+        document.getElementById('completeBtn').innerHTML = isRu ? '✅ Выполнил' : '✅ Done';
+        document.getElementById('failBtn').innerHTML = isRu ? '❌ Сорвался' : '❌ Relapse';
+        document.getElementById('helpBtn').innerHTML = isRu ? '🆘 ПОМОГИТЕ' : '🆘 HELP';
+        document.getElementById('manualResetBtn').innerHTML = isRu ? '🔄 Начать новую попытку' : '🔄 New attempt';
+        document.getElementById('historyScreen').querySelector('.logo').innerHTML = isRu ? '📜 История' : '📜 History';
+        document.getElementById('achievementsScreen').querySelector('.logo').innerHTML = isRu ? '🏆 Достижения' : '🏆 Achievements';
+        document.getElementById('settingsScreen').querySelector('.logo').innerHTML = isRu ? '⚙️ Настройки' : '⚙️ Settings';
+        const supportBtn = document.getElementById('supportBtn');
+        if (supportBtn) supportBtn.innerHTML = isRu ? '✉️ Связаться с автором' : '✉️ Contact author';
     }
 
     function switchScreen(screenId) {
@@ -435,10 +716,23 @@
         if (screenId === 'achievements') renderAchievements();
     }
 
+    // ========== INITIALIZATION ==========
     loadData();
     initWelcome();
     renderAll();
     
+    // Загружаем данные из облака при старте
+    if (isTelegram) {
+        loadFromCloud();
+        // Периодическая синхронизация
+        setInterval(syncWithCloud, SYNC_INTERVAL);
+        // Синхронизация при сворачивании
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) syncWithCloud();
+        });
+    }
+    
+    // Настройки
     document.getElementById('languageSelect').value = settings.language;
     document.getElementById('languageSelect').onchange = () => {
         settings.language = document.getElementById('languageSelect').value;
@@ -447,6 +741,8 @@
     };
     document.getElementById('supportBtn').onclick = () => window.location.href = 'https://t.me/Piholaa';
     applyLanguage();
+    
+    // Навигация и кнопки
     document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => switchScreen(btn.dataset.screen));
     document.getElementById('completeBtn').onclick = completeDay;
     document.getElementById('failBtn').onclick = failDay;
