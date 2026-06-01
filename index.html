@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CHOICE — 30 дней</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -429,7 +429,81 @@
             .nav-btn { padding: 12px 0; font-size: 0.75rem; }
             .grid { gap: 4px; }
             .setting-item { padding: 12px; }
+        
+            /* ========== ТЕЛЕФОН: увеличиваем трекер ========== */
+        @media (max-width: 600px) {
+        #trackerScreen {
+            justify-content: space-between;
         }
+        
+        #trackerScreen .logo {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+        
+        #trackerScreen .stats-cards {
+            gap: 8px;
+            margin: 8px 0;
+        }
+        
+        #trackerScreen .stat-card {
+            padding: 10px 8px;
+            border-radius: 16px;
+        }
+        
+        #trackerScreen .stat-value {
+            font-size: 1.3rem;
+        }
+        
+        #trackerScreen .stat-label {
+            font-size: 0.6rem;
+        }
+        
+        #trackerScreen .progress-bar-container {
+            height: 6px;
+            margin: 8px 0;
+        }
+        
+        #trackerScreen .progress-text {
+            font-size: 0.65rem;
+        }
+        
+        #trackerScreen .current-day-text {
+            font-size: 0.75rem;
+            margin: 6px 0;
+        }
+        
+        #trackerScreen .grid {
+            gap: 5px;
+            margin: 8px 0;
+        }
+        
+        #trackerScreen .day-cell {
+            font-size: 0.75rem;
+            border-radius: 10px;
+        }
+        
+        #trackerScreen .day-cell.current {
+            font-size: 0.8rem;
+        }
+        
+        #trackerScreen .action-panel {
+            gap: 8px;
+            margin: 8px 0;
+        }
+        
+        #trackerScreen .action-btn {
+            padding: 12px 8px;
+            font-size: 0.75rem;
+            border-radius: 14px;
+        }
+        
+        #trackerScreen .reset-btn {
+            font-size: 0.65rem;
+            padding: 8px 18px;
+            margin-top: 6px;
+        }
+    }
     </style>
 </head>
 <body>
