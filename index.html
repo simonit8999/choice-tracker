@@ -879,22 +879,19 @@
         saveNotificationSettings();
     }
 
-   function saveNotificationSettings() {
-    const settings = {
-        enabled: document.getElementById('notificationToggle').classList.contains('active'),
-        hour: document.getElementById('notificationHour').value,
-        minute: document.getElementById('notificationMinute').value,
-        timezone: document.getElementById('timezoneSelect').value
-    };
-    localStorage.setItem('choice_notifications', JSON.stringify(settings));
-    
-    // Если включили уведомления — открываем бота с командой
-    if (settings.enabled && isTelegram) {
-        tg.openTelegramLink(
-            'https://t.me/Choice111Bot?start=notify_' + settings.hour + '_' + settings.minute + '_' + settings.timezone
-        );
+       function saveNotificationSettings() {
+        const settings = {
+            enabled: document.getElementById('notificationToggle').classList.contains('active'),
+            hour: document.getElementById('notificationHour').value,
+            minute: document.getElementById('notificationMinute').value,
+            timezone: document.getElementById('timezoneSelect').value
+        };
+        localStorage.setItem('choice_notifications', JSON.stringify(settings));
+        
+        if (settings.enabled && isTelegram) {
+            tg.openTelegramLink('https://t.me/Choice111Bot?start=notify_' + settings.hour + '_' + settings.minute + '_' + settings.timezone);
+        }
     }
-}
 
 
     function applyLanguage() { 
