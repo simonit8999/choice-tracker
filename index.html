@@ -429,81 +429,25 @@
             .nav-btn { padding: 12px 0; font-size: 0.75rem; }
             .grid { gap: 4px; }
             .setting-item { padding: 12px; }
+        }
         
-            /* ========== ТЕЛЕФОН: увеличиваем трекер ========== */
         @media (max-width: 600px) {
-        #trackerScreen {
-            justify-content: space-between;
+            #trackerScreen { justify-content: space-between; }
+            #trackerScreen .logo { font-size: 1.4rem; margin-bottom: 8px; }
+            #trackerScreen .stats-cards { gap: 8px; margin: 8px 0; }
+            #trackerScreen .stat-card { padding: 10px 8px; border-radius: 16px; }
+            #trackerScreen .stat-value { font-size: 1.3rem; }
+            #trackerScreen .stat-label { font-size: 0.6rem; }
+            #trackerScreen .progress-bar-container { height: 6px; margin: 8px 0; }
+            #trackerScreen .progress-text { font-size: 0.65rem; }
+            #trackerScreen .current-day-text { font-size: 0.75rem; margin: 6px 0; }
+            #trackerScreen .grid { gap: 5px; margin: 8px 0; }
+            #trackerScreen .day-cell { font-size: 0.75rem; border-radius: 10px; }
+            #trackerScreen .day-cell.current { font-size: 0.8rem; }
+            #trackerScreen .action-panel { gap: 8px; margin: 8px 0; }
+            #trackerScreen .action-btn { padding: 12px 8px; font-size: 0.75rem; border-radius: 14px; }
+            #trackerScreen .reset-btn { font-size: 0.65rem; padding: 8px 18px; margin-top: 6px; }
         }
-        
-        #trackerScreen .logo {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
-        }
-        
-        #trackerScreen .stats-cards {
-            gap: 8px;
-            margin: 8px 0;
-        }
-        
-        #trackerScreen .stat-card {
-            padding: 10px 8px;
-            border-radius: 16px;
-        }
-        
-        #trackerScreen .stat-value {
-            font-size: 1.3rem;
-        }
-        
-        #trackerScreen .stat-label {
-            font-size: 0.6rem;
-        }
-        
-        #trackerScreen .progress-bar-container {
-            height: 6px;
-            margin: 8px 0;
-        }
-        
-        #trackerScreen .progress-text {
-            font-size: 0.65rem;
-        }
-        
-        #trackerScreen .current-day-text {
-            font-size: 0.75rem;
-            margin: 6px 0;
-        }
-        
-        #trackerScreen .grid {
-            gap: 5px;
-            margin: 8px 0;
-        }
-        
-        #trackerScreen .day-cell {
-            font-size: 0.75rem;
-            border-radius: 10px;
-        }
-        
-        #trackerScreen .day-cell.current {
-            font-size: 0.8rem;
-        }
-        
-        #trackerScreen .action-panel {
-            gap: 8px;
-            margin: 8px 0;
-        }
-        
-        #trackerScreen .action-btn {
-            padding: 12px 8px;
-            font-size: 0.75rem;
-            border-radius: 14px;
-        }
-        
-        #trackerScreen .reset-btn {
-            font-size: 0.65rem;
-            padding: 8px 18px;
-            margin-top: 6px;
-        }
-    }
     </style>
 </head>
 <body>
@@ -618,7 +562,6 @@
     const tg = window.Telegram?.WebApp;
     const isTelegram = !!tg;
     if (isTelegram) { tg.ready(); tg.expand(); }
-    
 
     const quotes = {
         1: "Первый день — самый простой. Не обманывай себя.",
@@ -651,7 +594,7 @@
         28: "Стресс — не оправдание. Стресс — это проверка.",
         29: "Один день. Ты прошёл 29. Не сломайся.",
         30: "Ты сделал выбор 30 раз. Ты — мужчина."
-    };
+            };
 
     const achievementsConfig = {
         5: { name: "🥉 Первый рубеж", message: "Ты прошёл 5 дней. 90% мужчин срываются раньше.", extra: "Ты в топ-10%!" },
@@ -675,7 +618,7 @@
             bestStreak = data.bestStreak || 0; 
             attemptsHistory = data.attemptsHistory || []; 
         }
-                if (!hasSeenWelcome && currentAttempt.startDate) localStorage.setItem('choice_welcome_seen', 'true');
+        if (!hasSeenWelcome && currentAttempt.startDate) localStorage.setItem('choice_welcome_seen', 'true');
         if (!currentAttempt.startDate && hasSeenWelcome) { currentAttempt.startDate = new Date().toISOString(); saveData(); }
     }
 
@@ -880,7 +823,7 @@
         saveNotificationSettings();
     }
 
-       function saveNotificationSettings() {
+    function saveNotificationSettings() {
         const settings = {
             enabled: document.getElementById('notificationToggle').classList.contains('active'),
             hour: document.getElementById('notificationHour').value,
@@ -893,7 +836,6 @@
             tg.openTelegramLink('https://t.me/Choice111Bot?start=notify_' + settings.hour + '_' + settings.minute + '_' + settings.timezone);
         }
     }
-
 
     function applyLanguage() { 
         const isRu = settings.language === 'ru'; 
@@ -914,7 +856,7 @@
         document.getElementById('supportBtn').innerHTML = isRu ? '✉️ Связаться с автором' : '✉️ Contact author';
     }
 
-        // INIT
+    // INIT
     loadData();
     initWelcome();
     initTheme();
