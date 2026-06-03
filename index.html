@@ -879,7 +879,7 @@
         saveNotificationSettings();
     }
 
-   function saveNotificationSettings() {
+   ffunction saveNotificationSettings() {
     const settings = {
         enabled: document.getElementById('notificationToggle').classList.contains('active'),
         hour: document.getElementById('notificationHour').value,
@@ -888,29 +888,12 @@
     };
     localStorage.setItem('choice_notifications', JSON.stringify(settings));
     
-    // Проверяем что isTelegram работает
-    if (!isTelegram) {
-        return;
+    // Если включили уведомления — открываем бота с командой
+    if (settings.enabled && isTelegram) {
+        tg.openTelegramLink(
+            'https://t.me/Choice111Bot?start=notify_' + settings.hour + '_' + settings.minute + '_' + settings.timezone
+        );
     }
-    
-    // Проверяем что пользователь есть
-    if (!tg.initDataUnsafe?.user) {
-        return;
-    }
-    
-    // Отправка через API Render
-    fetch('https://choice-tracker-api.onrender.com/api/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            user_id: tg.initDataUnsafe.user.id,
-            notification_settings: settings
-        })
-    }).then(res => res.json()).then(data => {
-        console.log('✅ Настройки отправлены');
-    }).catch(e => {
-        console.log('❌ Ошибка:', e);
-    });
 }
 
 
