@@ -618,6 +618,35 @@
     const tg = window.Telegram?.WebApp;
     const isTelegram = !!tg;
     if (isTelegram) { tg.ready(); tg.expand(); }
+    
+    let hasAccess = true;
+    
+    async function checkAccess() {
+        if (!isTelegram || !tg.initDataUnsafe?.user) return true;
+        try {
+            const resp = await fetch(`https://choice-tracker-api.onrender.com/api/check-access/${tg.initDataUnsafe.user.id}`);
+            const data = await resp.json();
+            hasAccess = data.has_access;
+            if (!hasAccess) {
+                document.body.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0a0a0a;color:#FFD700;text-align:center;padding:20px;font-family:sans-serif;">
+                        <div>
+                            <h2>⛔️ Доступ не найден</h2>
+                            <p>Оплати доступ чтобы пользоваться трекером</p>
+                            <button onclick="window.Telegram.WebApp.openTelegramLink('https://t.me/Choice_on_Bot')" 
+                                    style="background:#FFD700;color:#000;border:none;padding:12px 24px;border-radius:25px;font-weight:bold;margin-top:16px;cursor:pointer;">
+                                💎 Купить доступ
+                            </button>
+                        </div>
+                    </div>`;
+            }
+            return hasAccess;
+        } catch(e) {
+            return true;
+        }
+    }
+    
+    checkAccess();
 
     const quotes = {
         1: "Первый день — самый простой. Не обманывай себя.",
